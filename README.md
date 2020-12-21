@@ -1,6 +1,6 @@
-# Ripple Charts API #
+# Divvy Charts API #
 
-The Ripple Charts API, also known as the **Data API**, provides past and present information about the state of the Ripple Network through an HTTP API, with additional information calculated for analysis purposes. The Ripple Charts API is used as a data source by applications such as [Ripple Charts](https://www.ripplecharts.com/) and [ripple.com](https://www.ripple.com/).
+The Divvy Charts API, also known as the **Data API**, provides past and present information about the state of the Divvy Network through an HTTP API, with additional information calculated for analysis purposes. The Divvy Charts API is used as a data source by applications such as [Divvy Charts](https://www.divvycharts.com/) and [xdv.io](https://www.xdv.io/).
 
 (The API does not follow the conventions of a REST API, but you can use an HTTP client to access it in the same way you would access a REST API.)
 
@@ -12,12 +12,12 @@ The Ripple Charts API, also known as the **Data API**, provides past and present
 
 # Architecture #
 
-The Ripple Charts API is a [Node.js](https://nodejs.org/) application that uses [HBase](http://hbase.apache.org/) as its datastore.
+The Divvy Charts API is a [Node.js](https://nodejs.org/) application that uses [HBase](http://hbase.apache.org/) as its datastore.
 
 ## Components ##
 
 ### Ledger Importer ###
-The ledger importer imports ledgers from the Ripple Network into the data store.  The process is set up to import continously in real time as ledgers are validated, and also import historical ledgers.
+The ledger importer imports ledgers from the Divvy Network into the data store.  The process is set up to import continously in real time as ledgers are validated, and also import historical ledgers.
 
 ### Data Store ###
 The data store uses HBase to store ledgers. This is not as flexible as the old CouchDB data store, but it scales much better.
@@ -28,7 +28,7 @@ Accessing the historical data is not done by querying the database directly but 
 
 # Setup #
 
-Setup for the Ripple Charts API on top of HBase is not currently documented.
+Setup for the Divvy Charts API on top of HBase is not currently documented.
 
 ## Start API Service ##
 
@@ -64,9 +64,9 @@ Requests to the Charts API generally take the same format:
 ## Dates and Times ##
 [Date-Time]: #dates-and-times
 
-The Ripple Charts API uses Moment.js to parse strings, and therefore accepts [any date-time string that Moment.js recognizes](http://momentjs.com/docs/#supported-iso-8601-strings) as input.
+The Divvy Charts API uses Moment.js to parse strings, and therefore accepts [any date-time string that Moment.js recognizes](http://momentjs.com/docs/#supported-iso-8601-strings) as input.
 
-The Ripple Charts API always outputs dates in UTC, in the following format:
+The Divvy Charts API always outputs dates in UTC, in the following format:
 
 YYYY-MM-DDThh-mm-ss+00:00
 
@@ -82,8 +82,8 @@ Many methods define **a currency** as an object with the following fields:
 
 | Field | Value | Description |
 |-------|-------|-------------|
-| currency | String | Three-letter [ISO 4217 Currency Code](http://www.xe.com/iso4217.php) string, or a 160-bit hex string according to Ripple's internal [Currency format](https://wiki.ripple.com/Currency_format). |
-| issuer | String | Account address of the counterparty holding the currency. Usually an issuing gateway in the Ripple network. Omitted or `null` for XRP. |
+| currency | String | Three-letter [ISO 4217 Currency Code](http://www.xe.com/iso4217.php) string, or a 160-bit hex string according to Divvy's internal [Currency format](https://wiki.xdv.io/Currency_format). |
+| issuer | String | Account address of the counterparty holding the currency. Usually an issuing gateway in the Divvy network. Omitted or `null` for XDV. |
 
 Some methods describe **an amount of currency**, for example a quantity traded in a currency exchange. In [JSON format][Response Format], this takes the form of a nested JSON object with the following fields:
 
@@ -95,7 +95,7 @@ Some methods describe **an amount of currency**, for example a quantity traded i
 
 In [CSV or array format][Response Format], a currency amount is specified as three separate attributes that correspond to the fields of the JSON object. The name of the fields depends on the context: for example, the `baseAmount` column is equivalent to the `amount` field of the `base` currency amount object.
 
-**Warning:** JavaScript's native number type does not support `rippled`'s full range of precision. When dealing with very large or very small numbers, the `amount` values returned by the Charts API lose precision.
+**Warning:** JavaScript's native number type does not support `divvyd`'s full range of precision. When dealing with very large or very small numbers, the `amount` values returned by the Charts API lose precision.
 
 ## Response Formats ##
 [Response Format]: #response-formats
@@ -110,9 +110,9 @@ Several methods provide a `format` parameter, which lets you request results in 
 
 # API Method Reference #
 
-To use a method in this document, append the path for that method to the hostname of the Charts API instance you want to use.  Ripple Labs runs a public instance of the Ripple Charts API with full data, available at:
+To use a method in this document, append the path for that method to the hostname of the Charts API instance you want to use.  XDV.io runs a public instance of the Divvy Charts API with full data, available at:
 
-**https://api.ripplecharts.com**
+**https://charts.xdv.io**
 
 The API provides the following methods:
 
@@ -134,7 +134,7 @@ The API provides the following methods:
 
 
 ## Account Offers Exercised ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/master/api/routes/accountOffersExercised.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/master/api/routes/accountOffersExercised.js "Source")
 
 Retrieve currency-exchange orders being exercised for a single account.
 
@@ -182,13 +182,13 @@ POST /api/account_offers_exercised
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#account-offers-exercised)
+[Try it! >](https://xdv.io/build/charts-api-tool/#account-offers-exercised)
 
 The request includes the following body parameters:
 
 | Field | Value | Description |
 |-------|-------|-------------|
-| account | String (Ripple address) | Retrieve currency-exchange orders exercised as a result of this account sending a transaction, or another transaction modifying an order previously placed by this account. |
+| account | String (Divvy address) | Retrieve currency-exchange orders exercised as a result of this account sending a transaction, or another transaction modifying an order previously placed by this account. |
 | startTime | String ([Date-Time][]) | (Optional) Retrieve information starting at this time. Defaults to 30 days before `endTime`. |
 | endTime | String ([Date-Time][]) | (Optional) Retrieve information ending at this time. Defaults to the current time. |
 | descending | Boolean | (Optional) If true, return results in descending order. Defaults to false. |
@@ -212,7 +212,7 @@ The format of the response depends on the `format` parameter from the request. S
     "results": [
         {
             "base": {
-                "currency": "XRP",
+                "currency": "XDV",
                 "issuer": null,
                 "amount": 0.00001
             },
@@ -236,7 +236,7 @@ The format of the response depends on the `format` parameter from the request. S
 
 ```
 baseCurrency, baseIssuer, baseAmount, counterCurrency, counterIssuer, counterAmount, type, rate, counterparty, time, txHash, ledgerIndex
-XRP, , 0.00001, USD, rsP3mgGb2tcYUrxiLFiHJiQXhsziegtwBc, 5.080000065049717e-8, buy, 196.8503937007874, rUrgXPxenRbjnFDXKWUhH8mBJcQ2CyPfkG, 2014-09-17T21:47:00+00:00, 9D591B18EDDD34F0B6CF4223A2940AEA2C3CC778925BABF289E0011CD8FA056E, 8924146
+XDV, , 0.00001, USD, rsP3mgGb2tcYUrxiLFiHJiQXhsziegtwBc, 5.080000065049717e-8, buy, 196.8503937007874, rUrgXPxenRbjnFDXKWUhH8mBJcQ2CyPfkG, 2014-09-17T21:47:00+00:00, 9D591B18EDDD34F0B6CF4223A2940AEA2C3CC778925BABF289E0011CD8FA056E, 8924146
 ```
 
 *Array*
@@ -258,7 +258,7 @@ XRP, , 0.00001, USD, rsP3mgGb2tcYUrxiLFiHJiQXhsziegtwBc, 5.080000065049717e-8, b
         "ledgerIndex"
     ],
     [
-        "XRP",
+        "XDV",
         null,
         0.00001,
         "USD",
@@ -276,7 +276,7 @@ XRP, , 0.00001, USD, rsP3mgGb2tcYUrxiLFiHJiQXhsziegtwBc, 5.080000065049717e-8, b
 
 <!-- </div> -->
 
-Each result in the response describes an individual transaction that exercised a currency exchange on the account. This includes [OfferCreate](https://ripple.com/build/transactions#offercreate) and cross-currency [Payment](https://ripple.com/build/transactions#payment) transactions that the account sent, as well as transactions that consumed an offer that the account had previously placed.
+Each result in the response describes an individual transaction that exercised a currency exchange on the account. This includes [OfferCreate](https://xdv.io/build/transactions#offercreate) and cross-currency [Payment](https://xdv.io/build/transactions#payment) transactions that the account sent, as well as transactions that consumed an offer that the account had previously placed.
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -290,26 +290,26 @@ Each result in the response describes an individual transaction that exercised a
 | counterAmount | String ([currency amount][Currency Object]) | (CSV and array formats only) Quantity of the counter currency exchanged in this transaction. | 
 | type | String | Either `buy` or `sell`. If the specified account sent the transaction, `buy` means the account acquired the counter currency. If another account sent the transaction, `buy` means the specified account acquired the base currency. (In both cases, `sell` means the reverse.) |
 | rate | Number | The exchange ratio between the base and counter currency. |
-| counterparty | String (Ripple address) | The other account involved in this exchange. |
+| counterparty | String (Divvy address) | The other account involved in this exchange. |
 | time | String ([Date-Time][]) | The time this transaction occurred, as defined by the close time of the ledger that included it. |
-| txHash | String (Transaction Hash) | The identifying hash of the Ripple transaction that performed this exchange, as a hex string. |
+| txHash | String (Transaction Hash) | The identifying hash of the Divvy transaction that performed this exchange, as a hex string. |
 | ledgerIndex | Number | The sequence number of the ledger that included this transaction. |
 
 
 ## Account Transaction Stats ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/accountTransactionStats.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/accountTransactionStats.js "Source")
 
 **DEPRECATED** This API method may return inaccurate results. Do not use it.
 
 ## Account Transactions ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/accountTransactions.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/accountTransactions.js "Source")
 
 **DEPRECATED** This API method may return inaccurate results. Do not use it.
 
 ## Accounts Created ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/accountsCreated.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/accountsCreated.js "Source")
 
-Retrieve information about the creation of new Ripple accounts.
+Retrieve information about the creation of new Divvy accounts.
 
 #### Request Format ####
 
@@ -343,7 +343,7 @@ POST /api/accounts_created
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#accounts-created)
+[Try it! >](https://xdv.io/build/charts-api-tool/#accounts-created)
 
 The request includes the following body parameters:
 
@@ -431,20 +431,20 @@ The format of the response depends on the `format` and `reduce` parameters from 
 | Field | Type | Description |
 |-------|------|-------------|
 | time  | String ([Date-Time][]) | The time this interval begins |
-| count | Number | The number of accounts created (successfully funded with the XRP reserve) in this interval. |
+| count | Number | The number of accounts created (successfully funded with the XDV reserve) in this interval. |
 
 **If the results are not reduced** (the request specified `reduce` as false and did not include a `timeIncrement`), then each result represents an individual account that was created, with the following attributes:
 
 | Field | Type | Description |
 |-------|------|-------------|
 | time  | String ([Date-Time][]) | The time this account was created, as defined by the close time of the ledger containing the transaction that created it. |
-| account | String (Ripple Address) | The address of the newly-created account. |
+| account | String (Divvy Address) | The address of the newly-created account. |
 | txHash | String (Transaction Hash) | The identifying hash of the transaction that created this account. |
 | ledgerIndex | Number | The sequence number of the ledger when this account was created. |
 
 
 ## Exchange Rates ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/exchangeRates.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/exchangeRates.js "Source")
 
 Retrieve information about the exchange rates between one or more pairs of currency, based on trading activity in the network.
 
@@ -464,7 +464,7 @@ POST /api/exchange_rates
                 "issuer": "rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK"
             },
             "counter": {
-                "currency": "XRP"
+                "currency": "XDV"
             }
         },
         {
@@ -491,7 +491,7 @@ POST /api/exchange_rates
         "issuer": "rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK"
     },
     "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
     },
     "range": "day"
 }
@@ -508,7 +508,7 @@ POST /api/exchange_rates
                 "issuer": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q"
             },
             "counter": {
-                "currency": "XRP"
+                "currency": "XDV"
             },
             "depth": 0
         },
@@ -518,7 +518,7 @@ POST /api/exchange_rates
                 "issuer": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q"
             },
             "counter": {
-                "currency": "XRP"
+                "currency": "XDV"
             },
             "depth": 1000
         }
@@ -529,7 +529,7 @@ POST /api/exchange_rates
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#exchange-rates)
+[Try it! >](https://xdv.io/build/charts-api-tool/#exchange-rates)
 
 The request includes the following body parameters:
 
@@ -541,7 +541,7 @@ The request includes the following body parameters:
 | depth | Number | (Optional) Ignored unless `live` is true. Ignored if `pairs` is provided. Retrieve exchange rates for this amount of the `counter` currency. Provides a more accurate picture when the best orders in the market do not have enough volume to fully satisfy an exchange. Defaults to 0 (use the first bid and ask only). |
 | range | String | (Optional) Time period over which the exchange rate is calculated: `year`, `month`, `week`, `day`, or `hour`. Defaults to `day`. Ignored if `live` is true. |
 | last | Boolean | (Optional) If true, only return the price from the most recent exchange, without calculating [VWAP](https://en.wikipedia.org/wiki/Volume-weighted_average_price). Use for a faster response. Defaults to false. |
-| live | Boolean | (Optional) If true, retrieve the current price directly from the Ripple network instead, as the midpoint between weighted average of the bid and asks up to the depth specified . Otherwise, use historical data from the past `range` amount of time. Defaults to false. |
+| live | Boolean | (Optional) If true, retrieve the current price directly from the Divvy network instead, as the midpoint between weighted average of the bid and asks up to the depth specified . Otherwise, use historical data from the past `range` amount of time. Defaults to false. |
 
 You must provide either `pairs` or both `base` and `counter`.
 
@@ -559,10 +559,10 @@ Examples of successful responses:
         "base": {
             "currency": "CNY",
             "issuer": "rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK",
-            "name": "rippleCN"
+            "name": "divvyCN"
         },
         "counter": {
-            "currency": "XRP"
+            "currency": "XDV"
         },
         "rate": 15.360721689111838,
         "last": 15.699279
@@ -578,10 +578,10 @@ Examples of successful responses:
         "base": {
             "currency": "CNY",
             "issuer": "rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK",
-            "name": "rippleCN"
+            "name": "divvyCN"
         },
         "counter": {
-            "currency": "XRP"
+            "currency": "XDV"
         },
         "rate": 15.360721689111838,
         "last": 15.699279
@@ -614,7 +614,7 @@ Examples of successful responses:
             "name": "SnapSwap"
         },
         "counter": {
-            "currency": "XRP"
+            "currency": "XDV"
         },
         "rate": 25136.142311030344
     },
@@ -625,7 +625,7 @@ Examples of successful responses:
             "name": "SnapSwap"
         },
         "counter": {
-            "currency": "XRP"
+            "currency": "XDV"
         },
         "depth": 1000,
         "rate": 27250.470591648358
@@ -639,8 +639,8 @@ A successful result contains a JSON array. Each member of the array represents a
 
 | Field | Type | Description |
 |-------|------|-------------|
-| base  | Object ([Currency Object][]) | The base currency specified for this pair, possibly including a `name` field with the Ripple Name for the `issuer` address. |
-| counter | Object ([Currency Object][]) | The counter currency specified for this pair, possibly including a `name` field with the Ripple Name for the `issuer` address. |
+| base  | Object ([Currency Object][]) | The base currency specified for this pair, possibly including a `name` field with the Divvy Name for the `issuer` address. |
+| counter | Object ([Currency Object][]) | The counter currency specified for this pair, possibly including a `name` field with the Divvy Name for the `issuer` address. |
 | depth | Number | (May be omitted) The depth to search for this currency pair, if provided. |
 | rate  | Number | (May be omitted) The amount of the counter currency that you can purchase with 1 unit of the base currency. By default, this is calculated [volume-weighted average price](https://en.wikipedia.org/wiki/Volume-weighted_average_price) for all exchanges executed during the `range` period from the request. If the request specified `live` as true, this is instead calculated as the midpoint between the weighted average of current bid and ask rates in the network up to the specified `depth`. Omitted if the request specified `last` as `true`. |
 | last | Number | (May be omitted) The rate of the single most recent exchange to take place. |
@@ -649,7 +649,7 @@ If no exchanges are found for a currency pair from the request, that pair is omi
 
 
 ## Issuer Capitalization ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/issuerCapitalization.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/issuerCapitalization.js "Source")
 
 Retrieve the total capitalization (outstanding balance) of specified currency issuers over time.
 
@@ -680,7 +680,7 @@ POST /api/issuer_capitalization
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#issuer-capitalization)
+[Try it! >](https://xdv.io/build/charts-api-tool/#issuer-capitalization)
 
 The request includes the following body parameters:
 
@@ -836,16 +836,16 @@ A successful result contains a **JSON array** of objects representing the issuer
 | Field | Type | Description |
 |-------|------|-------------|
 | currency | String | Currency code of the currency described by this record. |
-| issuer | String (Ripple Address) | The account address of the gateway issuing this currency. |
-| name | String | The name of this gateway, which usually corresponds to the Ripple Name of the account. |
-| hotwallets | Array of Ripple Addresses | Hot wallets controlled by this gateway. Assets held by these accounts are not counted towards the capitalization. |
+| issuer | String (Divvy Address) | The account address of the gateway issuing this currency. |
+| name | String | The name of this gateway, which usually corresponds to the Divvy Name of the account. |
+| hotwallets | Array of Divvy Addresses | Hot wallets controlled by this gateway. Assets held by these accounts are not counted towards the capitalization. |
 | results | Array of Arrays | The capitalization of the issuer/currency pair as an array of intervals. Each nested array has two values: a String ([Date-Time][]) specifying the beginning of the interval, and a number representing the total units of the currency distributed through the network at the time. |
 
-The list of gateway names and hot wallets is defined by the [gateways.json](https://github.com/ripple/ripple-data-api/blob/a6c23a8c1bc5f073f2dd2bf32e8d763b66b6a2e3/api/gateways.json) file in the server tree. In the future, this may be [expanded to use host-meta](https://ripplelabs.atlassian.net/browse/RD-75).
+The list of gateway names and hot wallets is defined by the [gateways.json](https://github.com/xdv/divvy-data-api/blob/a6c23a8c1bc5f073f2dd2bf32e8d763b66b6a2e3/api/gateways.json) file in the server tree. In the future, this may be [expanded to use host-meta](https://divvylabs.atlassian.net/browse/RD-75).
 
 
 ## Ledgers Closed ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/ledgersClosed.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/ledgersClosed.js "Source")
 
 Retrieve information about ledgers closed over time.
 
@@ -891,7 +891,7 @@ POST /api/ledgers_closed
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#ledgers-closed)
+[Try it! >](https://xdv.io/build/charts-api-tool/#ledgers-closed)
 
 The request includes the following body parameters:
 
@@ -1055,7 +1055,7 @@ The format of the response depends on the `format` and `reduce` parameters from 
 
 
 ## Market Traders ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/marketTraders.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/marketTraders.js "Source")
 
 Return a list of accounts that participated in trading a specified currency exchange.
 
@@ -1069,7 +1069,7 @@ Return a list of accounts that participated in trading a specified currency exch
 POST /api/market_traders
 {
     "base": {
-        "currency": "XRP"
+        "currency": "XDV"
     },
     "counter": {
         "currency": "KRW",
@@ -1093,7 +1093,7 @@ POST /api/market_traders
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#market-traders)
+[Try it! >](https://xdv.io/build/charts-api-tool/#market-traders)
 
 The request includes the following body parameters:
 
@@ -1106,7 +1106,7 @@ The request includes the following body parameters:
 | transactions | Boolean | (Optional) If true, include individual transactions in the response. Defaults to false. Ignored if `format` is csv. |
 | format | String | (Optional) The [Response Format][] to use: `csv` or `json`. If omitted, defaults to a CSV-like JSON array format. |
 
-If both `base` and `counter` are omitted, the API combines the results from a [hardcoded list of popular markets](https://github.com/ripple/ripple-data-api/blob/2d456ace25c7ee157ed510b801ccc987b58d5d92/api/routes/marketTraders.js#L81-L92) with XRP as the base currency.
+If both `base` and `counter` are omitted, the API combines the results from a [hardcoded list of popular markets](https://github.com/xdv/divvy-data-api/blob/2d456ace25c7ee157ed510b801ccc987b58d5d92/api/routes/marketTraders.js#L81-L92) with XDV as the base currency.
 
 **Note:** This method *does not* have an `endTime` parameter.
 
@@ -1690,14 +1690,14 @@ If transactions are included, each transaction is represented as an array with t
 | Number | The amount of the counter currency received for each unit of the base spent. |
 | Number | The amount of base currency in this transaction. |
 | Number | The amount of counter currency in this transaction. |
-| String (Ripple Address) | One party to this transaction. |
-| String (Ripple Address) | The other party to this transaction. |
+| String (Divvy Address) | One party to this transaction. |
+| String (Divvy Address) | The other party to this transaction. |
 | String (Transaction Hash) | The identifying hash for this transaction. (This may be `null` for very old transactions.) |
 | Number | The sequence number of the ledger that included this transaction. |
 
 
 ## Offers ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/offers.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/offers.js "Source")
 
 Returns all currency-exchange orders and cancellations over time for a specified currency pair, including unfulfilled offers.
 
@@ -1715,7 +1715,7 @@ POST /api/offers
         "issuer": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q"
     },
     "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
     },
     "startTime": "2015-03-01T10:00:00.000Z",
     "endTime": "2015-03-07T10:00:00.000Z",
@@ -1736,7 +1736,7 @@ POST /api/offers
         "issuer": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q"
     },
     "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
     },
     "startTime": "2015-03-01T10:00:00.000Z",
     "endTime": "2015-03-07T10:00:00.000Z",
@@ -1750,7 +1750,7 @@ POST /api/offers
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#offers)
+[Try it! >](https://xdv.io/build/charts-api-tool/#offers)
 
 The request includes the following body parameters:
 
@@ -1782,7 +1782,7 @@ The format of the response depends on the `format` and `reduce` parameters from 
         "issuer": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q"
     },
     "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
     },
     "startTime": "2015-03-01T00:00:00+00:00",
     "endTime": "2015-03-07T00:00:00+00:00",
@@ -1821,7 +1821,7 @@ The format of the response depends on the `format` and `reduce` parameters from 
         "issuer": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q"
     },
     "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
     },
     "startTime": "2015-03-01T00:00:00+00:00",
     "endTime": "2015-03-07T00:00:00+00:00",
@@ -1887,8 +1887,8 @@ The format of the response depends on the `format` and `reduce` parameters from 
 | Field | Type | Description |
 |-------|------|-------------|
 | time  | String ([Date-Time][]) | The start time of this interval. |
-| OfferCreate | Number | The number of [currency-exchange order creation transactions](https://ripple.com/build/transactions#offercreate) in this interval. |
-| OfferCancel | Number | The number of [currency-exchange order cancellation transactions](https://ripple.com/build/transactions#offercancel) in this interval. |
+| OfferCreate | Number | The number of [currency-exchange order creation transactions](https://xdv.io/build/transactions#offercreate) in this interval. |
+| OfferCancel | Number | The number of [currency-exchange order cancellation transactions](https://xdv.io/build/transactions#offercancel) in this interval. |
 
 **Note:** An `OfferCreate`-type transaction can cancel a previous order in addition to creating a new one.
 
@@ -1896,8 +1896,8 @@ The format of the response depends on the `format` and `reduce` parameters from 
 
 | Field | Type | Description |
 |-------|------|-------------|
-| type  | String | The [type of this transaction](https://ripple.com/build/transactions): `OfferCreate` or `OfferCancel`.
-| account | String (Ripple Address) | The account that sent this transaction. |
+| type  | String | The [type of this transaction](https://xdv.io/build/transactions): `OfferCreate` or `OfferCancel`.
+| account | String (Divvy Address) | The account that sent this transaction. |
 | baseAmount | Object ([Currency Amount][Currency Object]) | The amount of the base currency exchanged in this transaction. |
 | counterAmount | Object ([Currency Amount][Currency Object]) | The amount of the counter currency exchanged in this transaction. |
 | price | Number | The amount of counter currency received for each unit of the base currency spent in this transaction. |
@@ -1907,7 +1907,7 @@ The format of the response depends on the `format` and `reduce` parameters from 
 
 
 ## Offers Exercised ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/master/api/routes/offersExercised.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/master/api/routes/offersExercised.js "Source")
 
 Retrieve information about currency-exchange orders being exercised on the network, for a specific pair of currencies and timeframe.
 
@@ -1958,7 +1958,7 @@ POST /api/offers_exercised
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#offers-exercised)
+[Try it! >](https://xdv.io/build/charts-api-tool/#offers-exercised)
 
 The request includes the following body parameters:
 
@@ -2148,18 +2148,18 @@ Note: The API omits intervals during which no exchanges occurred. This means tha
 | price | Number | The amount of the counter currency received for each unit of the base-currency spent in this trade. |
 | baseAmount | Number | Total amount of the base currency spent in this trade. |
 | counterAmount | Number | Total amount of the counter currency received in this trade. |
-| account | String | The Ripple address of the account providing the base currency. |
-| counterparty | String (Ripple Address) | The Ripple address of the account providing the counter currency. |
+| account | String | The Divvy address of the account providing the base currency. |
+| counterparty | String (Divvy Address) | The Divvy address of the account providing the counter currency. |
 | tx_hash | String (Transaction Hash) | The identifying hash of the transaction where this transaction occurred. |
 | ledgerIndex | Number | The sequence number of the ledger that included this transaction. |
 
 
 ## Top Markets ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/totalTradeVolume.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/totalTradeVolume.js "Source")
 
-Returns the total trade volume for [a selection of the largest currency-exchange markets in the Ripple Network](https://github.com/ripple/ripple-data-api/blob/develop/api/library/metrics/tradeVolume.js) during a given time period.
+Returns the total trade volume for [a selection of the largest currency-exchange markets in the Divvy Network](https://github.com/xdv/divvy-data-api/blob/develop/api/library/metrics/tradeVolume.js) during a given time period.
 
-The total volume is normalized in terms of XRP and then optionally converted to another specified currency.
+The total volume is normalized in terms of XDV and then optionally converted to another specified currency.
 
 #### Request Format ####
 
@@ -2181,7 +2181,7 @@ POST /api/top_markets
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#top-markets)
+[Try it! >](https://xdv.io/build/charts-api-tool/#top-markets)
 
 The request includes the following body parameters:
 
@@ -2189,7 +2189,7 @@ The request includes the following body parameters:
 |-------|-------|-------------|
 | startTime | String ([Date-Time][]) | Retrieve information from the interval containing or starting from this time. Defaults to 24 hours before the current time. |
 | interval | String | Return results from an interval of this length. |
-| exchange | Object ([Currency Object][]) | (Optional) Represent the volume of each market in terms of this currency. Defaults to XRP. |
+| exchange | Object ([Currency Object][]) | (Optional) Represent the volume of each market in terms of this currency. Defaults to XDV. |
 
 #### Response Format ####
 
@@ -2205,7 +2205,7 @@ An example of a successful response:
         "issuer": "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.0004093940882798027,
       "count": 12818,
@@ -2218,7 +2218,7 @@ An example of a successful response:
         "issuer": "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.0000015089406113337684,
       "count": 5038,
@@ -2231,7 +2231,7 @@ An example of a successful response:
         "issuer": "rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.002517187670715517,
       "count": 5792,
@@ -2244,7 +2244,7 @@ An example of a successful response:
         "issuer": "razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.002487380215448072,
       "count": 7069,
@@ -2257,7 +2257,7 @@ An example of a successful response:
         "issuer": "rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.0024999228710402563,
       "count": 20660,
@@ -2270,7 +2270,7 @@ An example of a successful response:
         "issuer": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.0003945533232038895,
       "count": 33575,
@@ -2283,7 +2283,7 @@ An example of a successful response:
         "issuer": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.00033245421053307723,
       "count": 13892,
@@ -2296,7 +2296,7 @@ An example of a successful response:
         "issuer": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.0000014787515510977754,
       "count": 22939,
@@ -2309,7 +2309,7 @@ An example of a successful response:
         "issuer": "rJHygWcTLVpSXkowott6kzgZU6viQSVYM1"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.00002019256666183595,
       "count": 4,
@@ -2322,7 +2322,7 @@ An example of a successful response:
         "issuer": "rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.048446318835714555,
       "count": 11387,
@@ -2335,7 +2335,7 @@ An example of a successful response:
         "issuer": "r94s8px6kSw1uZ1MV98dhSRTvc6VMPoPcN"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.049622732367643606,
       "count": 7604,
@@ -2348,7 +2348,7 @@ An example of a successful response:
         "issuer": "rJRi8WW24gt9X85PHAxfWNPCizMMhqUQwg"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.04957853568065961,
       "count": 650,
@@ -2361,7 +2361,7 @@ An example of a successful response:
         "issuer": "rUkMKjQitpgAM5WTGk79xpjT38DEJY283d"
       },
       "counter": {
-        "currency": "XRP"
+        "currency": "XDV"
       },
       "rate": 0.45875087906923134,
       "count": 3309,
@@ -2542,7 +2542,7 @@ A successful result contains the following fields:
 | startTime | Object ([Date-Time][]) | The starting time from the request. |
 | endTime | Object ([Date-Time][]) | The ending time from the request. |
 | exchange | Object ([Currency Object][]) | The currency from the request that is used to express the volume. |
-| exchangeRate | Number | The amount of the `exchange` currency that can be bought for 1 XRP. |
+| exchangeRate | Number | The amount of the `exchange` currency that can be bought for 1 XDV. |
 | total | Number | The total volume traded across all markets, in terms of the `exchange` currency. |
 | count | Number | The total number of trades in all the markets. |
 | components | Array | The market volumes of each market in the list of top markets. |
@@ -2562,7 +2562,7 @@ Each member of the `components` array has the following fields:
 
 
 ## Total Network Value ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/totalNetworkValue.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/totalNetworkValue.js "Source")
 
 Retrieve the total amount of currency held in the network, as of a specified time.
 
@@ -2585,14 +2585,14 @@ POST /api/total_network_value
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#total-network-value)
+[Try it! >](https://xdv.io/build/charts-api-tool/#total-network-value)
 
 The request includes the following body parameters:
 
 | Field | Value | Description |
 |-------|-------|-------------|
 | time  | Object ([Date-Time][]) | (Optional) Calculate results at this point in time. Defaults to the current time. |
-| exchange | Object ([Currency Object][]) | (Optional) Express the total network value in terms of this currency. Defaults to XRP. |
+| exchange | Object ([Currency Object][]) | (Optional) Express the total network value in terms of this currency. Defaults to XDV. |
 
 #### Response Format ####
 
@@ -2695,7 +2695,7 @@ An example of a successful response:
         {
             "currency": "CNY",
             "issuer": "rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK",
-            "name": "rippleCN",
+            "name": "divvyCN",
             "hotwallets": [
                 "rNaptDNfFXo1quhKwMaNPf66iwPqA8YLky",
                 "rno91tGDJeRcnM7EMXj8KG9UTyxRGMMz8s"
@@ -2707,7 +2707,7 @@ An example of a successful response:
         {
             "currency": "CNY",
             "issuer": "razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA",
-            "name": "RippleChina",
+            "name": "DivvyChina",
             "hotwallets": [
                 "r45dBj4S3VvMMYXxr9vHX4Z4Ma6ifPMCkK"
             ],
@@ -2718,7 +2718,7 @@ An example of a successful response:
         {
             "currency": "CNY",
             "issuer": "rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y",
-            "name": "Ripple Fox",
+            "name": "Divvy Fox",
             "hotwallets": [
                 "rLSnkKvMfPD9abLoQFxQJMYyZqJcsqkL3o",
                 "rPcQaiyDxMwLr7Q9eFmn5VnVx2RN57MUmN",
@@ -2731,7 +2731,7 @@ An example of a successful response:
         {
             "currency": "JPY",
             "issuer": "rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6",
-            "name": "Ripple Trade Japan",
+            "name": "Divvy Trade Japan",
             "hotwallets": [
                 "r3bStftDydy4dKEUBc9YMabTTk98uZzMpF"
             ],
@@ -2751,7 +2751,7 @@ An example of a successful response:
         {
             "currency": "JPY",
             "issuer": "rJRi8WW24gt9X85PHAxfWNPCizMMhqUQwg",
-            "name": "Ripple Market Japan",
+            "name": "Divvy Market Japan",
             "hotwallets": [],
             "amount": 29743906.757837094,
             "rate": 0.007931783750900699,
@@ -2760,7 +2760,7 @@ An example of a successful response:
         {
             "currency": "XAU",
             "issuer": "r9Dr5xwkeLegBeXq6ujinjSBLQzQ1zQGjH",
-            "name": "Ripple Singapore",
+            "name": "Divvy Singapore",
             "hotwallets": [
                 "rL4A1qbTkrJXT644gyzmLVk6uudyMagJ9Q"
             ],
@@ -2789,7 +2789,7 @@ An example of a successful response:
             "convertedAmount": 117378.25275875695
         },
         {
-            "currency": "XRP",
+            "currency": "XDV",
             "amount": 99999222492.58995,
             "rate": 0.02390745076867089,
             "convertedAmount": 2390726488.646961
@@ -2804,26 +2804,26 @@ A successful result contains the following fields:
 |-------|------|-------------|
 | time  | Object ([Date-Time][]) | Values are calculated for this time, from the request. |
 | exchange | Object ([Currency Object][]) | Values are expressed in this currency, from the request. |
-| exchangeRate | Number | The amount of the `exchange` currency necessary to buy 1 XRP. |
-| total | Number | The total value of all currency issued by [a selection of large gateways](https://github.com/ripple/ripple-data-api/blob/develop/api/library/metrics/networkValue.js), and all XRP in the network (including including XRP that is [held in reserve by Ripple Labs](https://www.ripplelabs.com/xrp-distribution/)). |
-| components | Array | A list of the gateways and XRP that contributed to the `total` value. |
+| exchangeRate | Number | The amount of the `exchange` currency necessary to buy 1 XDV. |
+| total | Number | The total value of all currency issued by [a selection of large gateways](https://github.com/xdv/divvy-data-api/blob/develop/api/library/metrics/networkValue.js), and all XDV in the network (including including XDV that is [held in reserve by xdv.io](https://xdv.io/xdv-distribution/)). |
+| components | Array | A list of the gateways and XDV that contributed to the `total` value. |
 
-Each member of the `components` array is an object representing a currency issued by a specific gateway, except for one member that represents the XRP native to the network. Each object has the following properties:
+Each member of the `components` array is an object representing a currency issued by a specific gateway, except for one member that represents the XDV native to the network. Each object has the following properties:
 
 | Field | Type | Description |
 |-------|------|-------------|
 | currency | String | Currency code for this currency. |
-| issuer | String (Ripple Address) | (Omitted for XRP) The Ripple account of the gateway issuing this currency. |
-| name | String | (Omitted for XRP) The name of the gateway issuing this currency. |
-| hotwallets | Array of Strings | (Omitted for XRP) Each member of this list is the Ripple Address of an account that the gateway uses as a hot wallet. |
+| issuer | String (Divvy Address) | (Omitted for XDV) The Divvy account of the gateway issuing this currency. |
+| name | String | (Omitted for XDV) The name of the gateway issuing this currency. |
+| hotwallets | Array of Strings | (Omitted for XDV) Each member of this list is the Divvy Address of an account that the gateway uses as a hot wallet. |
 | amount | Number | The total amount of this currency issued as of the requested time. |
 | rate | Number | The amount of the `exchange` currency necessary to buy 1 unit of this currency. (This is `0` if no amount exists at the time.) |
 | convertedAmount | Number | The total amount of this currency issued as of the requested time, converted to the `exchange` currency. |
 
 ## Total Value Sent ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/totalValueSent.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/totalValueSent.js "Source")
 
-The total amount of money sent, in payments and currency exchanges, for a [curated list of currencies and issuers](https://github.com/ripple/ripple-data-api/blob/develop/api/library/metrics/transactionVolume.js). Results are normalized to a single currency.
+The total amount of money sent, in payments and currency exchanges, for a [curated list of currencies and issuers](https://github.com/xdv/divvy-data-api/blob/develop/api/library/metrics/transactionVolume.js). Results are normalized to a single currency.
 
 #### Request Format ####
 
@@ -2845,7 +2845,7 @@ POST /api/total_value_sent
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#total-value-sent)
+[Try it! >](https://xdv.io/build/charts-api-tool/#total-value-sent)
 
 The request includes the following body parameters:
 
@@ -2853,7 +2853,7 @@ The request includes the following body parameters:
 |-------|-------|-------------|
 | startTime | String ([Date-Time][]) | (Optional) Retrieve information from the interval containing or starting at this time. Defaults to 24 hours before the current time. |
 | interval | String | Retrieve information for an interval of this length. Valid values are `month`, `week`, or `day`. |
-| exchange | Object ([Currency Object][]) | (Optional) Represent the volume of each market in terms of this currency. Defaults to XRP. |
+| exchange | Object ([Currency Object][]) | (Optional) Represent the volume of each market in terms of this currency. Defaults to XDV. |
 
 #### Response Format ####
 
@@ -2968,7 +2968,7 @@ An example of a successful response:
             "convertedAmount": 6194044.082632835
         },
         {
-            "currency": "XRP",
+            "currency": "XDV",
             "amount": 8211627045.779512,
             "count": 1052459,
             "rate": 0.017264153697157482,
@@ -2994,7 +2994,7 @@ A successful result contains the following fields:
 | startTime | Object ([Date-Time][]) | The starting time from the request. |
 | endTime | Object ([Date-Time][]) | The ending time from the request. |
 | exchange | Object ([Currency Object][]) | Totals are normalize to this currency from the request. |
-| exchangeRate | Number | The amount of the `exchange` currency necessary to buy 1 XRP. |
+| exchangeRate | Number | The amount of the `exchange` currency necessary to buy 1 XDV. |
 | total | Number | The total value sent in the network, normalized to the `exchange` currency, during the requested time period. |
 | count | Number | The number of transactions processed to calculate this result. |
 | components | Array | An array of the currencies used to calculate this total. |
@@ -3004,16 +3004,16 @@ Each member of the `components` array is an Object with the following fields:
 | Field | Type | Description |
 |-------|------|-------------|
 | currency | String | Currency code for this currency. |
-| issuer | String (Ripple Address) | (Omitted for XRP) The Ripple account of the gateway issuing this currency. |
+| issuer | String (Divvy Address) | (Omitted for XDV) The Divvy account of the gateway issuing this currency. |
 | amount | Number | The total amount of this currency sent during the requested time period. |
 | count | Number | The total number of transactions that sent this currency during the requested time period. |
 | rate | Number | The amount of the `exchange` currency necessary to buy 1 unit of this currency. (This is 0 if there are no transactions for this currency in the requested time period.) |
 | convertedAmount | Number | The total amount of this currency sent during the requested time period, converted to the `exchange` currency. |
 
 ## Transaction Stats ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/transactionStats.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/transactionStats.js "Source")
 
-Retrieve information about Ripple transactions during a specific time frame.
+Retrieve information about Divvy transactions during a specific time frame.
 
 #### Request Format ####
 
@@ -3050,7 +3050,7 @@ POST /api/transaction_stats
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#transaction-stats)
+[Try it! >](https://xdv.io/build/charts-api-tool/#transaction-stats)
 
 The request includes the following body parameters:
 
@@ -3196,7 +3196,7 @@ The format of the response depends on the `format` and `reduce` parameters from 
 
 <!-- </div> -->
 
-*Note:* In JSON format, the `startTime` and `endTime` parameters at the top level are switched when the request specifies `"descending": true`. This is a bug. See [RD-110](https://ripplelabs.atlassian.net/browse/RD-110) for more details.
+*Note:* In JSON format, the `startTime` and `endTime` parameters at the top level are switched when the request specifies `"descending": true`. This is a bug. See [RD-110](https://divvylabs.atlassian.net/browse/RD-110) for more details.
 
 **If the results are reduced** (the default), then each result represents an interval of time, with the following attributes:
 
@@ -3208,7 +3208,7 @@ The format of the response depends on the `format` and `reduce` parameters from 
 | OfferCancel | Number | (May be omitted) The number of OfferCancel transactions during this interval sent by the specified account. |
 | TrustSet | Number | (May be omitted) The number of TrustSet transactions during this interval sent by the specified account. |
 | AccountSet | Number | (May be omitted) The number of AccountSet transactions during this interval sent by the specified account. |
-| SetFee | Number | (May be omitted) The number of SetFee pseudo-transactions during this interval sent by the specified account. Since SetFee is a pseudo-transaction, this transaction type only appears for [ACCOUNT_ZERO](https://wiki.ripple.com/Accounts#ACCOUNT_ZERO). |
+| SetFee | Number | (May be omitted) The number of SetFee pseudo-transactions during this interval sent by the specified account. Since SetFee is a pseudo-transaction, this transaction type only appears for [ACCOUNT_ZERO](https://wiki.xdv.io/Accounts#ACCOUNT_ZERO). |
 | SetRegularKey |  Number | (May be omitted) The number of SetRegularKey transactions during this interval sent by the specified account. |
 
 Each of the transaction type attributes is omitted when there is no data. In CSV or array format, columns are included for each type that has a nonzero value in any interval. In JSON format, each interval includes fields only for the types that have nonzero values in that particular interval.
@@ -3219,13 +3219,13 @@ Each of the transaction type attributes is omitted when there is no data. In CSV
 |-------|------|-------------|
 | time | String ([Date-Time][]) | The time this transaction occurred. |
 | type | String | The transaction type. Valid types are: `AccountSet`, `OfferCancel`, `OfferCreate`, `Payment`, `SetFee`, `SetRegularKey`, and `TrustSet` |
-| account | String (Ripple Address) | The address of the account that sent this transaction. |
+| account | String (Divvy Address) | The address of the account that sent this transaction. |
 | txHash | String (Transaction Hash) | The identifying hash of this transaction. |
 | ledgerIndex | Number (Ledger Index) | The identifying sequence number of the ledger that included this transaction. |
 
 
 ## Value Sent ##
-[[Source]<br>](https://github.com/ripple/ripple-data-api/blob/develop/api/routes/valueSent.js "Source")
+[[Source]<br>](https://github.com/xdv/divvy-data-api/blob/develop/api/routes/valueSent.js "Source")
 
 Retrieve the total amount of a single currency sent, in payments and currency exchanges, during a specific time period.
 
@@ -3267,14 +3267,14 @@ POST /api/value_sent
 
 <!-- </div> -->
 
-[Try it! >](https://ripple.com/build/charts-api-tool/#value-sent)
+[Try it! >](https://xdv.io/build/charts-api-tool/#value-sent)
 
 The request includes the following body parameters:
 
 | Field | Value | Description |
 |-------|-------|-------------|
-| currency | String | Three-letter [ISO 4217 Currency Code](http://www.xe.com/iso4217.php) string, or a 160-bit hex string according to Ripple's internal [Currency format](https://wiki.ripple.com/Currency_format). |
-| issuer | String | Account address of the counterparty holding the currency. Usually an issuing gateway in the Ripple network. Omitted or `null` for XRP. |
+| currency | String | Three-letter [ISO 4217 Currency Code](http://www.xe.com/iso4217.php) string, or a 160-bit hex string according to Divvy's internal [Currency format](https://wiki.xdv.io/Currency_format). |
+| issuer | String | Account address of the counterparty holding the currency. Usually an issuing gateway in the Divvy network. Omitted or `null` for XDV. |
 | startTime | String ([Date-Time][]) | Retrieve information starting at this time. |
 | endTime | String ([Date-Time][]) | Retrieve information ending at this time. |
 | timeIncrement | String | (Optional) Divide results into intervals of the specified length: `year`, `month`, `day`, `hour`, `minute`, or `second`. The value `all` collapses the results into just one interval. Defaults to `all`. |
@@ -3365,8 +3365,8 @@ The format of the response depends on the `format` and `reduce` parameters from 
 |-------|------|-------------|
 | time | String ([Date-Time][]) | The time this transaction occurred. |
 | amount | Number | The amount of the requested currency sent in this transaction. |
-| account | String (Ripple Address) | The address of the account that sent this transaction. |
-| destination | String (Ripple Address) | The address of the account that received the funds. Due to [RD-111](https://ripplelabs.atlassian.net/browse/RD-111), this value is always returned as `null` instead. |
+| account | String (Divvy Address) | The address of the account that sent this transaction. |
+| destination | String (Divvy Address) | The address of the account that received the funds. Due to [RD-111](https://divvylabs.atlassian.net/browse/RD-111), this value is always returned as `null` instead. |
 | txHash | String (Transaction Hash) | The identifying hash of this transaction. |
 | ledgerIndex | Number (Ledger Index) | The identifying sequence number of the ledger that included this transaction. |
 

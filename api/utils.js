@@ -1,6 +1,6 @@
 var  _          = require('lodash');
 var moment      = require('moment');
-var UInt160     = require('ripple-lib').UInt160;
+var UInt160     = require('divvy-lib').UInt160;
 var gatewayList = require('./gateways.json');
 var path        = require('path');
 var fs          = require('fs');
@@ -61,7 +61,7 @@ exports.getGatewaysByCurrency = function () {
 
 /**
  *  gatewayNameToAddress translates a given name and,
- *  optionally, a currency to its corresponding ripple address or
+ *  optionally, a currency to its corresponding divvy address or
  *  returns null
  */
 exports.gatewayNameToAddress = function ( name, currency ) {

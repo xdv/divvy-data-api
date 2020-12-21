@@ -19,7 +19,7 @@ module.exports = function(params, callback) {
   if (!options.currency) {
     callback('currency is required');
     return;
-  } else if (options.currency !== 'XRP' && !options.issuer) {
+  } else if (options.currency !== 'XDV' && !options.issuer) {
     callback('issuer is required');
     return;
   } else if (options.interval && intervals.indexOf(options.interval) === -1) {

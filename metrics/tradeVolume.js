@@ -102,7 +102,7 @@ function finalize (rate, res, index) {
 
   console.log(index);
   if (!rows[0]) {
-    var header = ["startTime", "totalVolume", "count", "XRPrate"];
+    var header = ["startTime", "totalVolume", "count", "XDVrate"];
     res.components.forEach(function(c){
       var prefix = getHeaderPrefix(c);
       header.push(prefix + "-volume");

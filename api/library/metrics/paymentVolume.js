@@ -19,29 +19,29 @@ var currencies      = [
   {currency: 'BTC', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'}, //Snapswap BTC
   {currency: 'BTC', issuer: 'rG6FZ31hDHN1K5Dkbma3PSB5uVCuVVRzfn'}, //Bitso BTC
   {currency: 'EUR', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'}, //Snapswap EUR
-  {currency: 'CNY', issuer: 'rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK'}, //RippleCN CNY
-  {currency: 'CNY', issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA'}, //RippleChina CNY
-  {currency: 'CNY', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}, //RippleFox CNY
+  {currency: 'CNY', issuer: 'rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK'}, //DivvyCN CNY
+  {currency: 'CNY', issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA'}, //DivvyChina CNY
+  {currency: 'CNY', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}, //DivvyFox CNY
   {currency: 'CNY', issuer: 'rM8199qFwspxiWNZRChZdZbGN5WrCepVP1'}, //DotPayco CNY
   {currency: 'JPY', issuer: 'r94s8px6kSw1uZ1MV98dhSRTvc6VMPoPcN'}, //TokyoJPY JPY
   {currency: 'JPY', issuer: 'rJRi8WW24gt9X85PHAxfWNPCizMMhqUQwg'}, //Digital Gate Japan JPY
-  {currency: 'JPY', issuer: 'r9ZFPSb1TFdnJwbTMYHvVwFK1bQPUCVNfJ'}, //Ripple Exchange Tokyo JPY
-  {currency: 'JPY', issuer: 'rB3gZey7VWHYRqJHLoHDEJXJ2pEPNieKiS'}, //Mr Ripple JPY
-  {currency: 'STR', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}, //Ripple Fox STR
-  {currency: 'FMM', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}, //Ripple Fox FMM
+  {currency: 'JPY', issuer: 'r9ZFPSb1TFdnJwbTMYHvVwFK1bQPUCVNfJ'}, //Divvy Exchange Tokyo JPY
+  {currency: 'JPY', issuer: 'rB3gZey7VWHYRqJHLoHDEJXJ2pEPNieKiS'}, //Mr Divvy JPY
+  {currency: 'STR', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}, //Divvy Fox STR
+  {currency: 'FMM', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}, //Divvy Fox FMM
   {currency: 'MXN', issuer: 'rG6FZ31hDHN1K5Dkbma3PSB5uVCuVVRzfn'}, //Bitso MXN
-  {currency: 'XRP'}
+  {currency: 'XDV'}
 ];
 
 //populate conversion pairs
 currencies.forEach(function(currency) {
 
-  if (currency.currency == 'XRP') {
+  if (currency.currency == 'XDV') {
     return;
   }
 
   conversionPairs.push({
-    base    : {currency: 'XRP'},
+    base    : {currency: 'XDV'},
     counter : currency
   });
 });
@@ -79,7 +79,7 @@ function totalPayments(params, callback) {
   var response = {
     startTime    : startTime.format(),
     endTime      : endTime.format(),
-    exchange     : {currency:'XRP'},
+    exchange     : {currency:'XDV'},
     exchangeRate : 1,
     total        : 0,
     count        : 0
@@ -153,8 +153,8 @@ function totalPayments(params, callback) {
 
       currencies.forEach(function(currency, index) {
 
-        if (currency.currency == "XRP") {
-          currency.rate            = 1; //for XRP
+        if (currency.currency == "XDV") {
+          currency.rate            = 1; //for XDV
           currency.convertedAmount = currency.amount;
         }
 
@@ -164,7 +164,7 @@ function totalPayments(params, callback) {
 
       response.components = currencies;
 
-      //cache XRP normalized version
+      //cache XDV normalized version
       if (!params.no_cache) {
         cacheResponse(rowkey, response);
       }

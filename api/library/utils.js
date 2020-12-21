@@ -1,5 +1,5 @@
 var moment           = require('moment');
-var SerializedObject = require('ripple-lib').SerializedObject;
+var SerializedObject = require('divvy-lib').SerializedObject;
 
 /**
  * formatTime
@@ -141,12 +141,12 @@ module.exports.getAlignedTime = function (original, interval, multiple) {
 }
 
 /*
- * get XRP to specified currency conversion
+ * get XDV to specified currency conversion
  */
 
 exports.getConversion = function (params, callback) {
   var options = {
-    base       : {currency:"XRP"},
+    base       : {currency:"XDV"},
     counter    : {currency:params.currency,issuer:params.issuer},
     start      : params.start,
     endTime    : params.end,

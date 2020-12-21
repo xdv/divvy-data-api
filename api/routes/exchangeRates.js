@@ -1,5 +1,5 @@
 var moment   = require('moment'),
-    ripple   = require('ripple-lib'),
+    divvy   = require('divvy-lib'),
     async    = require('async'),
     _        = require('lodash'),
     utils    = require('../utils'),
@@ -20,13 +20,13 @@ var moment   = require('moment'),
  *      },
  *      {
  *        base    : {currency:"CNY","issuer":"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK"},
- *        counter : {currency:"XRP"}
+ *        counter : {currency:"XDV"}
  *      }
  *    ],
  *    live: false
  *
  *    base    : {currency:"CNY","issuer":"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK"}, //required if "pairs" not present, for a single currency pair exchange rate
- *    counter : {currency:"XRP"}, //require if "pairs" not present, for a single currency pair exchange rate
+ *    counter : {currency:"XDV"}, //require if "pairs" not present, for a single currency pair exchange rate
  *    range   : "hour", "day", "week", "month", year",  //time range to average the price over, defaults to "day"
  *    last    : (boolean) retreive the last traded price only (faster query)
  *  }
@@ -35,8 +35,8 @@ var moment   = require('moment'),
  *  {
  *    pairs : [
  *      {
- *        base    : {currency:"CNY","issuer":"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK","name":"rippleCN"},
- *        counter : {currency:"XRP"},
+ *        base    : {currency:"CNY","issuer":"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK","name":"divvyCN"},
+ *        counter : {currency:"XDV"},
  *        rate    : //volume weighted average price
  *        last    : //last trade price
  *        range   : "hour", "day", "month", year" - from request
@@ -57,22 +57,22 @@ var moment   = require('moment'),
  *      },
  *      {
  *        base    : {currency:"CNY","issuer":"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK"},
- *        counter : {currency:"XRP"},
+ *        counter : {currency:"XDV"},
  *        depth   : 100
  *      }
  *    ],
  *    live: true
  *
  *    base    : {currency:"CNY","issuer":"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK"}, //required if "pairs" not present, for a single currency pair exchange rate
- *    counter : {currency:"XRP"}, //require if "pairs" not present, for a single currency pair exchange rate
+ *    counter : {currency:"XDV"}, //require if "pairs" not present, for a single currency pair exchange rate
  *  }
  *
  *  response :
  *  {
  *    pairs : [
  *      {
- *        base    : {currency:"CNY","issuer":"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK","name":"rippleCN"},
- *        counter : {currency:"XRP"},
+ *        base    : {currency:"CNY","issuer":"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK","name":"divvyCN"},
+ *        counter : {currency:"XDV"},
  *        rate    : //midpoint weighted average price of bid and ask
  *        depth   : //amount of currency the exchange rate is being checked for
  *      },
@@ -86,22 +86,22 @@ var moment   = require('moment'),
   curl -H "Content-Type: application/json" -X POST -d '{
     "pairs" : [{
       "base":{"currency":"BTC","issuer":"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
-      "counter":{"currency":"XRP"},
+      "counter":{"currency":"XDV"},
       "depth":1
     },
     {
       "base":{"currency":"BTC","issuer":"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
-      "counter":{"currency":"XRP"},
+      "counter":{"currency":"XDV"},
       "depth":10
     },
     {
       "base":{"currency":"BTC","issuer":"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
-      "counter":{"currency":"XRP"},
+      "counter":{"currency":"XDV"},
       "depth":50
     },
     {
       "base":{"currency":"BTC","issuer":"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
-      "counter":{"currency":"XRP"},
+      "counter":{"currency":"XDV"},
       "depth":100
     }],
     "live":true
@@ -112,25 +112,25 @@ var moment   = require('moment'),
   curl -H "Content-Type: application/json" -X POST -d '{
     "pairs" : [{
       "base":{"currency":"BTC","issuer":"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
-      "counter":{"currency":"XRP"}
+      "counter":{"currency":"XDV"}
     },
     {
       "base":{"currency":"USD","issuer":"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
-      "counter":{"currency":"XRP"}
+      "counter":{"currency":"XDV"}
     },
     {
       "base":{"currency":"CNY","issuer":"rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK"},
-      "counter":{"currency":"XRP"}
+      "counter":{"currency":"XDV"}
     },
     {
       "base":{"currency":"BTC","issuer":"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
-      "counter":{"currency":"XRP"}
+      "counter":{"currency":"XDV"}
     }]
   }' http://localhost:5993/api/exchangerates
 
   curl -H "Content-Type: application/json" -X POST -d '{
     "base"    : {"currency":"BTC","issuer":"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
-    "counter" : {"currency":"XRP"},
+    "counter" : {"currency":"XDV"},
     "last"    : true
 
   }' http://localhost:5993/api/exchangerates
@@ -178,7 +178,7 @@ function exchangeRates (params, callback) {
 
   async.mapLimit(list, 50, function(pair, asyncCallbackPair) {
 
-    //live request must go to rippled
+    //live request must go to divvyd
     if (live) {
       midpoint_rate(pair, pair.depth, function(error, avg) {
         if (error) return asyncCallbackPair(error);
@@ -263,10 +263,10 @@ function midpoint_rate(pair, depth, mpCallback) {
   });
 }
 
-//Make api call to rippled to get orderbooks
+//Make api call to divvyd to get orderbooks
 function process_offers(json, ba, depth, callback) {
   request.post(
-    'http://s1.ripple.com:51234/',
+    'http://s1.xdv.io:51234/',
     {json: json},
     function (error, response, body) {
       if (!error) {
@@ -339,7 +339,7 @@ function weighted_average(offers, ba, depth, callback) {
 
 /* HELPER FUNCTIONS */
 
-//Builds API call based on currencies provided and (xrp has no issuer).
+//Builds API call based on currencies provided and (xdv has no issuer).
 function call_builder(ba, pair) {
   var currencyPair = parseCurrencyPair(pair),
       tg,
@@ -390,13 +390,13 @@ function parseCurrency (c) {
   else {
     currency = c.currency.toUpperCase();
 
-    if (currency == 'XRP') {
-      if (c.issuer) return null;   //XRP should not have an issuer
-      return {currency:'XRP'};
+    if (currency == 'XDV') {
+      if (c.issuer) return null;   //XDV should not have an issuer
+      return {currency:'XDV'};
     }
 
-    else if (currency != 'XRP' && !c.issuer) return null;  //IOUs must have an issuer
-    else if (ripple.UInt160.is_valid(c.issuer)) {
+    else if (currency != 'XDV' && !c.issuer) return null;  //IOUs must have an issuer
+    else if (divvy.UInt160.is_valid(c.issuer)) {
 
       issuer = c.issuer;
       name   = utils.getGatewayName(issuer);

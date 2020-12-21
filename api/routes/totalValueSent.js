@@ -1,6 +1,6 @@
 var winston = require('winston');
 var moment  = require('moment');
-var ripple  = require('ripple-lib');
+var divvy  = require('divvy-lib');
 var async   = require('async');
 var utils   = require('../library/utils');
 var transactionVolume = require('../library/metrics/transactionVolume');
@@ -16,16 +16,16 @@ var intervals = [
  *
  *  total of amounts sent or exchanged from any wallet, either through a payment
  *  or an "offerCreate" that exercises another offer, for a curated list of
- *  currency/issuers and XRP, normalized to a specified currency
+ *  currency/issuers and XDV, normalized to a specified currency
  *
  *  request :
  *
  * {
  *    startTime : (any momentjs-readable date), // optional, defaults to 1 day before end time
  *    endTime   : (any momentjs-readable date), // optional, defaults to now
- *    exchange  : {                             // optional, defaults to XRP
- *      currency  : (XRP, USD, BTC, etc.),
- *      issuer    : "rAusZ...."                 // optional, required if currency != XRP
+ *    exchange  : {                             // optional, defaults to XDV
+ *      currency  : (XDV, USD, BTC, etc.),
+ *      issuer    : "rAusZ...."                 // optional, required if currency != XDV
  *    }
  * }
  *
@@ -74,7 +74,7 @@ var intervals = [
 function totalValueSent(params, callback) {
 
   var viewOpts = {};
-  var ex       = params.exchange || {currency:'XRP'};
+  var ex       = params.exchange || {currency:'XDV'};
   var interval;
   var startTime;
   var rowkey;
@@ -88,11 +88,11 @@ function totalValueSent(params, callback) {
   } else if (typeof ex.currency != 'string') {
     return callback('invalid exchange currency');
 
-  } else if (ex.currency.toUpperCase() != "XRP" && !ex.issuer) {
+  } else if (ex.currency.toUpperCase() != "XDV" && !ex.issuer) {
     return callback('exchange issuer is required');
 
-  } else if (ex.currency == "XRP" && ex.issuer) {
-    return callback('XRP cannot have an issuer');
+  } else if (ex.currency == "XDV" && ex.issuer) {
+    return callback('XDV cannot have an issuer');
   }
 
   interval  = (params.interval || '').toLowerCase();
@@ -143,7 +143,7 @@ function totalValueSent(params, callback) {
   function handleResponse (options, row, callback) {
     var params;
 
-    if (options.ex.currency === 'XRP') {
+    if (options.ex.currency === 'XDV') {
       callback(null, row);
       return;
     }

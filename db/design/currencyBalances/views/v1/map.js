@@ -31,12 +31,12 @@ function (doc) {
           previous = node.PreviousFields ? node.PreviousFields.Balance : 0,
           change   = (balance - previous) / 1000000.0;
             
-          balance  = balance / 1000000.0; //convert to XRP
+          balance  = balance / 1000000.0; //convert to XDV
          
-          emit(["XRP"].concat(timestamp), [fields.Account, balance, change, unix, tx.hash]);
+          emit(["XDV"].concat(timestamp), [fields.Account, balance, change, unix, tx.hash]);
         } 
       
-      } else if (node.LedgerEntryType === "RippleState") {
+      } else if (node.LedgerEntryType === "DivvyState") {
        
         var balance, previous, change;
         var currency, issuer, highParty, lowParty, highLimit, lowLimit;

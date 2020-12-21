@@ -103,7 +103,7 @@ function finalize(rate, res, index) {
   console.log(index);
 
   if (!rows[0]) {
-    var header = ["startTime", "totalVolume", "count", "XRPrate"];
+    var header = ["startTime", "totalVolume", "count", "XDVrate"];
     res.components.forEach(function(c){
       if (c.issuer) {
         header.push(c.currency+"/"+c.issuer+"-volume");

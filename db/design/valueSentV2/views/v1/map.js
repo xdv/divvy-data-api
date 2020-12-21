@@ -44,26 +44,26 @@ function(doc) {
 
       var node = affNode.CreatedNode || affNode.ModifiedNode || affNode.DeletedNode;
 
-      // Look for XRP balance change in AccountRoot node
+      // Look for XDV balance change in AccountRoot node
       if (node.LedgerEntryType === 'AccountRoot') {
 
-        var xrpBalChange = parseAccountRootBalanceChange(node, account);
+        var xdvBalChange = parseAccountRootBalanceChange(node, account);
         
-        if (xrpBalChange) {
-          xrpBalChange.value += parseFloat(tx.Fee); //remove the fee from the balance change
+        if (xdvBalChange) {
+          xdvBalChange.value += parseFloat(tx.Fee); //remove the fee from the balance change
           
-          //if we are still negative, XRP was sent.
+          //if we are still negative, XDV was sent.
           //often this would be zero, indicating only a fee
-          //and not really sending XRP
-          if (xrpBalChange.value<0) {
-            xrpBalChange.value = dropsToXrp(xrpBalChange.value); //convert to XRP
-            accountBalanceChanges.push(xrpBalChange);
+          //and not really sending XDV
+          if (xdvBalChange.value<0) {
+            xdvBalChange.value = dropsToXdv(xdvBalChange.value); //convert to XDV
+            accountBalanceChanges.push(xdvBalChange);
           }
         }
       }
 
-      // Look for trustline balance change in RippleState node
-      if (node.LedgerEntryType === 'RippleState') {
+      // Look for trustline balance change in DivvyState node
+      if (node.LedgerEntryType === 'DivvyState') {
 
         var currBalChange = parseTrustlineBalanceChange(node, account, destination);
         if (currBalChange) {
@@ -85,8 +85,8 @@ function(doc) {
 
       if (node.NewFields.Account === account) {
         return {
-          value: dropsToXrp(node.NewFields.Balance),
-          currency: 'XRP',
+          value: dropsToXdv(node.NewFields.Balance),
+          currency: 'XDV',
           issuer: ''
         };
       }
@@ -100,10 +100,10 @@ function(doc) {
         prevBal    = node.PreviousFields.Balance,
         balChange  = finalBal - prevBal;
       
-      //if the final balance is greater than the previous, xrp was sent
+      //if the final balance is greater than the previous, xdv was sent
       if (balChange<0) return {
         value    : balChange,
-        currency : 'XRP',
+        currency : 'XDV',
         issuer   : ''
       };
     }
@@ -178,12 +178,12 @@ function(doc) {
     return balChange;
   }
 
-  function dropsToXrp (drops) {
+  function dropsToXdv (drops) {
     return parseFloat(drops) / 1000000.0;
   }
 
-  function xrpToDrops (xrp) {
-    return parseFloat(xrp) * 1000000.0;
+  function xdvToDrops (xdv) {
+    return parseFloat(xdv) * 1000000.0;
   }
 
 }
@@ -322,7 +322,7 @@ function(doc) {
 //                     },
 //                     "LowNode": "0000000000000113"
 //                   },
-//                   "LedgerEntryType": "RippleState",
+//                   "LedgerEntryType": "DivvyState",
 //                   "LedgerIndex": "235866687C354C777919CF68490F86E81CCF96E9F068765B964808DE7B97AEAF",
 //                   "PreviousFields": {
 //                     "Balance": {
@@ -357,7 +357,7 @@ function(doc) {
 //                     },
 //                     "LowNode": "0000000000000000"
 //                   },
-//                   "LedgerEntryType": "RippleState",
+//                   "LedgerEntryType": "DivvyState",
 //                   "LedgerIndex": "2FAC03FAF21C97882149BC3D968431F947547E202841E703786E1B1229D904F0",
 //                   "PreviousFields": {
 //                     "Balance": {
@@ -411,7 +411,7 @@ function(doc) {
 //                     },
 //                     "LowNode": "000000000000003B"
 //                   },
-//                   "LedgerEntryType": "RippleState",
+//                   "LedgerEntryType": "DivvyState",
 //                   "LedgerIndex": "D505A48DABB927A1F2A0E0A4A4393320772BDB14F243FBB38B1F89340E7B5D2E",
 //                   "PreviousFields": {
 //                     "Balance": {
@@ -446,7 +446,7 @@ function(doc) {
 //                     },
 //                     "LowNode": "00000000000000BB"
 //                   },
-//                   "LedgerEntryType": "RippleState",
+//                   "LedgerEntryType": "DivvyState",
 //                   "LedgerIndex": "DB50D38DF8AA6F652D7BF58229745D8095FFFA9465130D1C1976AAEBB5C2DCDE",
 //                   "PreviousFields": {
 //                     "Balance": {

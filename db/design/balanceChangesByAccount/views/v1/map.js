@@ -14,7 +14,7 @@ function( doc ) {
 
       var node = affNode.CreatedNode || affNode.ModifiedNode || affNode.DeletedNode;
 
-      if ( !node || node.LedgerEntryType !== "RippleState" ) {
+      if ( !node || node.LedgerEntryType !== "DivvyState" ) {
         return;
       }
 

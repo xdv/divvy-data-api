@@ -1,6 +1,6 @@
 var moment = require('moment');
 var tools  = require('../utils');
-var ripple = require('ripple-lib');
+var divvy = require('divvy-lib');
 var _      = require('underscore');
 
 var intervals = {
@@ -55,11 +55,11 @@ module.exports = function (params, callback) {
   options.base    = params.base.currency.toUpperCase();
   options.counter = params.counter.currency.toUpperCase();
 
-  if (options.base !== 'XRP' && !params.base.issuer) {
+  if (options.base !== 'XDV' && !params.base.issuer) {
     callback('please specifiy a base issuer');
     return;
 
-  } else if (options.counter !== 'XRP' && !params.counter.issuer) {
+  } else if (options.counter !== 'XDV' && !params.counter.issuer) {
     callback('please specifiy a counter issuer');
     return;
   }

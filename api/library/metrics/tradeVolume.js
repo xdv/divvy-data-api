@@ -1,6 +1,6 @@
 var winston = require('winston');
 var moment  = require('moment');
-var ripple  = require('ripple-lib');
+var divvy  = require('divvy-lib');
 var async   = require('async');
 var utils   = require('../utils');
 
@@ -8,77 +8,77 @@ var marketPairs = [
   {
     // Bitstamp USD market
     base: {currency: 'USD', issuer: 'rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B'},
-    counter: {currency: 'XRP'}
+    counter: {currency: 'XDV'}
   },
   {
     // Bitstamp BTC market
     base: {currency: 'BTC', issuer: 'rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B'},
-    counter: {currency: 'XRP'}
+    counter: {currency: 'XDV'}
   },
   {
-    // RippleCN CNY market
+    // DivvyCN CNY market
     base: {currency: 'CNY', issuer: 'rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK'},
-    counter: {currency: 'XRP'}
+    counter: {currency: 'XDV'}
   },
   {
-    // RippleChina CNY market
+    // DivvyChina CNY market
     base: {currency: 'CNY', issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA'},
-    counter: {currency: 'XRP'}
+    counter: {currency: 'XDV'}
   },
   {
-    // RippleFox CNY market
+    // DivvyFox CNY market
     base: {currency: 'CNY', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'},
-    counter: {currency: 'XRP'}
+    counter: {currency: 'XDV'}
   },
   {
     // SnapSwap USD market
     base: {currency: 'USD', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'},
-    counter: {currency: 'XRP'}
+    counter: {currency: 'XDV'}
   },
   {
     // SnapSwap EUR market
     base: {currency: 'EUR', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'},
-    counter: {currency: 'XRP'}
+    counter: {currency: 'XDV'}
   },
   {
     // SnapSwap BTC market
     base: {currency:'BTC', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'},
-    counter: {currency:'XRP'}
+    counter: {currency:'XDV'}
   },
   {
     // TokyoJPY JPY
     base: {currency:'JPY', issuer: 'r94s8px6kSw1uZ1MV98dhSRTvc6VMPoPcN'},
-    counter: {currency:'XRP'}
+    counter: {currency:'XDV'}
   },
   {
     // Digital Gate Japan JPY
     base: {currency:'JPY', issuer: 'rJRi8WW24gt9X85PHAxfWNPCizMMhqUQwg'},
-    counter: {currency:'XRP'}
+    counter: {currency:'XDV'}
   },
   {
-    // Ripple Exchange Tokyo JPY
+    // Divvy Exchange Tokyo JPY
     base: {currency:'JPY', issuer: 'r9ZFPSb1TFdnJwbTMYHvVwFK1bQPUCVNfJ'},
-    counter: {currency:'XRP'}
+    counter: {currency:'XDV'}
   },
   {
-    // Ripple Fox STR
+    // Divvy Fox STR
     base: {currency:'STR', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'},
-    counter: {currency:'XRP'}
+    counter: {currency:'XDV'}
   },
   {
-    // Ripple Fox FMM
+    // Divvy Fox FMM
     base: {currency:'FMM', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'},
-    counter: {currency:'XRP'}
+    counter: {currency:'XDV'}
   },
   {
     // Bitso MXN
     base: {currency:'MXN', issuer: 'rG6FZ31hDHN1K5Dkbma3PSB5uVCuVVRzfn'},
-    counter: {currency:'XRP'}
+    counter: {currency:'XDV'}
   },
   {
     // Bitso BTC
     base: {currency:'BTC', issuer: 'rG6FZ31hDHN1K5Dkbma3PSB5uVCuVVRzfn'},
-    counter: {currency:'XRP'}
+    counter: {currency:'XDV'}
   },
   {
     // Snapswap EUR/ Snapswap USD
@@ -106,32 +106,32 @@ var marketPairs = [
     counter : {currency: 'USD', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'},
   },
   {
-    // Bitstamp USD/ rippleCN CNY
+    // Bitstamp USD/ divvyCN CNY
     base    : {currency: 'CNY', issuer: 'rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK'},
     counter : {currency: 'USD', issuer: 'rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B'}
   },
   {
-    // Bitstamp USD/ rippleChina CNY
+    // Bitstamp USD/ divvyChina CNY
     base    : {currency: 'CNY', issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA'},
     counter : {currency: 'USD', issuer: 'rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B'}
   },
   {
-    // Bitstamp USD/ rippleFox CNY
+    // Bitstamp USD/ divvyFox CNY
     base    : {currency: 'CNY', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'},
     counter : {currency: 'USD', issuer: 'rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B'}
   },
   {
-    // Snapswap USD/ rippleFox CNY
+    // Snapswap USD/ divvyFox CNY
     base    : {currency: 'CNY', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'},
     counter : {currency: 'USD', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'}
   },
   {
-    // Snapswap USD/ rippleFox CNY
+    // Snapswap USD/ divvyFox CNY
     base    : {currency: 'CNY', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'},
     counter : {currency: 'FMM', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}
   },
   {
-    // TokyoJPY JPY/ rippleFox CNY
+    // TokyoJPY JPY/ divvyFox CNY
     base    : {currency: 'JPY', issuer: 'r94s8px6kSw1uZ1MV98dhSRTvc6VMPoPcN'},
     counter : {currency: 'CNY', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}
   },
@@ -252,23 +252,23 @@ function tradeVolume(params, callback) {
     var response = {
       startTime    : startTime.format(),
       endTime      : endTime.format(),
-      exchange     : {currency:'XRP'},
+      exchange     : {currency:'XDV'},
       exchangeRate : 1,
       total        : 0,
       count        : 0
     };
 
-    //get rates vs XRP
+    //get rates vs XDV
     pairs.forEach(function(pair, index) {
-      if (pair.counter.currency === 'XRP') {
+      if (pair.counter.currency === 'XDV') {
         rates[pair.base.currency + "." + pair.base.issuer] = pair.rate;
       }
     });
 
 
-    //convert non - XRP to XRP value
+    //convert non - XDV to XDV value
     pairs.forEach(function(pair, index) {
-      if (pair.counter.currency !== 'XRP') {
+      if (pair.counter.currency !== 'XDV') {
         pair.rate = rates[pair.base.currency + "." + pair.base.issuer];
       }
 
@@ -279,7 +279,7 @@ function tradeVolume(params, callback) {
 
     response.components = pairs;
 
-    //cache XRP normalized version
+    //cache XDV normalized version
     if (!params.no_cache) {
       cacheResponse (rowkey, response);
     }

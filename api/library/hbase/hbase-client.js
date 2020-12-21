@@ -1,12 +1,12 @@
 var Promise    = require('bluebird');
-var ripple     = require('ripple-lib');
+var divvy     = require('divvy-lib');
 var moment     = require('moment');
 var utils      = require('../utils');
 var Hbase      = require('./hbase-thrift');
 //var Parser     = require('../ledgerParser');
 
-var SerializedObject = ripple.SerializedObject;
-var binformat        = ripple.binformat;
+var SerializedObject = divvy.SerializedObject;
+var binformat        = divvy.binformat;
 
 var EPOCH_OFFSET = 946684800;
 var LI_PAD       = 12;
@@ -782,15 +782,15 @@ HbaseClient.prototype.getExchanges = function (options, callback) {
    */
 
   function handleInterest (rows) {
-    var base    = ripple.Currency.from_json(options.base.currency);
-    var counter = ripple.Currency.from_json(options.counter.currency);
+    var base    = divvy.Currency.from_json(options.base.currency);
+    var counter = divvy.Currency.from_json(options.counter.currency);
 
     if (base.has_interest()) {
       if (options.unreduced) {
         rows.forEach(function(row, i){
 
           //apply interest to the base amount
-          var amount = ripple.Amount.from_human(row.base_amount + " " + options.base.currency)
+          var amount = divvy.Amount.from_human(row.base_amount + " " + options.base.currency)
             .applyInterest(new Date(row.time*1000))
             .to_human();
           var pct = row.base_amount/amount;
@@ -803,7 +803,7 @@ HbaseClient.prototype.getExchanges = function (options, callback) {
         rows.forEach(function(row, i){
 
           //apply interest to the base volume
-          var volume = ripple.Amount.from_human(row.base_volume + " " + options.base.currency)
+          var volume = divvy.Amount.from_human(row.base_volume + " " + options.base.currency)
             .applyInterest(new Date(Date.parse(row.start)))
             .to_human();
           var pct = row.base_volume/volume;
@@ -822,7 +822,7 @@ HbaseClient.prototype.getExchanges = function (options, callback) {
         rows.forEach(function(row, i){
 
           //apply interest to the counter amount
-          var amount = ripple.Amount.from_human(row.counter_amount + " " + options.counter.currency)
+          var amount = divvy.Amount.from_human(row.counter_amount + " " + options.counter.currency)
             .applyInterest(new Date(row.time*1000))
             .to_human();
           var pct = amount/row.counter_amount;
@@ -836,7 +836,7 @@ HbaseClient.prototype.getExchanges = function (options, callback) {
           if (!i) return;
 
           //apply interest to the counter volume
-          var volume = ripple.Amount.from_human(row.counter_volume + " " + options.base.currency)
+          var volume = divvy.Amount.from_human(row.counter_volume + " " + options.base.currency)
             .applyInterest(new Date(Date.parse(row.start)))
             .to_human();
           var pct = volume/row.counter_volume;
@@ -939,8 +939,8 @@ HbaseClient.prototype.getExchanges = function (options, callback) {
     }
 
     rows.forEach(function(row) {
-      if (options.base.currency    === 'XRP' && row.base_amount < 0.0001)    return;
-      if (options.counter.currency === 'XRP' && row.counter_amount < 0.0001) return;
+      if (options.base.currency    === 'XDV' && row.base_amount < 0.0001)    return;
+      if (options.counter.currency === 'XDV' && row.counter_amount < 0.0001) return;
 
       reduced.base_volume    += row.base_amount;
       reduced.counter_volume += row.counter_amount;
@@ -1703,7 +1703,7 @@ HbaseClient.prototype.prepareParsedData = function (data) {
     key = c.account + suffix;
     tables.account_balance_changes[c.account + suffix] = row;
 
-    //XRP has no issuer
+    //XDV has no issuer
     if (c.issuer) {
       tables.account_balance_changes[c.issuer  + suffix] = row;
     }
@@ -1906,13 +1906,13 @@ HbaseClient.prototype.removeLedger = function (hash, callback) {
       return;
     }
 
-    //parser expects ripple epoch
+    //parser expects divvy epoch
     ledger.close_time  -= EPOCH_OFFSET;
     transactions        = ledger.transactions;
     ledger.transactions = [];
 
     //ledgers must be formatted according to the output from
-    //rippled's ledger command
+    //divvyd's ledger command
     transactions.forEach(function(tx, i) {
       if (!tx) return;
 

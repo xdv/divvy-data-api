@@ -8,10 +8,10 @@ var winston = require('winston'),
  * marketTraders
  * Returns a list of accounts that participated in trading the specified currency
  * pair during the specified time period, ordered by base currency volume.
- * If no trading pair is provided, the API uses a list of the top XRP markets
+ * If no trading pair is provided, the API uses a list of the top XDV markets
  *
  *
- * base (JSON, optional) ... base currency-issuer. If not present, top XRP markets are queried
+ * base (JSON, optional) ... base currency-issuer. If not present, top XDV markets are queried
  * counter  (JSON, optional) ... counter currency-issuer. Required if base is present
  * period (string, optional) ... Any of the following ("24h", "3d", "7d")
  * startTime (string, optional) ... moment.js readable date string
@@ -58,18 +58,18 @@ function marketTraders (params, callback) {
     if (typeof base != 'object')               return callback('invalid base currency');
     else if (!base.currency)                   return callback('base currency is required');
     else if (typeof base.currency != 'string') return callback('invalid base currency');
-    else if (base.currency.toUpperCase() != "XRP" && !base.issuer)
+    else if (base.currency.toUpperCase() != "XDV" && !base.issuer)
       return callback('base issuer is required');
-    else if (base.currency == "XRP" && base.issuer)
-      return callback('XRP cannot have an issuer');
+    else if (base.currency == "XDV" && base.issuer)
+      return callback('XDV cannot have an issuer');
 
     if (typeof counter != 'object')               return callback('invalid counter currency');
     else if (!counter.currency)                   return callback('counter currency is required');
     else if (typeof counter.currency != 'string') return callback('invalid counter currency');
-    else if (counter.currency.toUpperCase() != "XRP" && !counter.issuer)
+    else if (counter.currency.toUpperCase() != "XDV" && !counter.issuer)
       return callback('counter issuer is required');
-    else if (counter.currency == "XRP" && counter.issuer)
-      return callback('XRP cannot have an issuer');
+    else if (counter.currency == "XDV" && counter.issuer)
+      return callback('XDV cannot have an issuer');
 
     currencies.push({base:base,counter:counter});
 
@@ -78,17 +78,17 @@ function marketTraders (params, callback) {
   } else if (counter) {
     return callback('base currency is required');
 
-  //use top XRP markets
+  //use top XDV markets
   } else currencies = [
     {currency: 'USD', issuer: 'rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B'},  //Bitstamp USD
     {currency: 'BTC', issuer: 'rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B'},  //Bitstamp BTC
     {currency: 'BTC', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'}, //Snapswap BTC
-    {currency: 'BTC', issuer: 'rfYv1TXnwgDDK4WQNbFALykYuEBnrR4pDX'}, //Dividend Rippler BTC
-    {currency: 'BTC', issuer: 'rNPRNzBB92BVpAhhZr4iXDTveCgV5Pofm9'}, //Ripple Israel BTC
+    {currency: 'BTC', issuer: 'rfYv1TXnwgDDK4WQNbFALykYuEBnrR4pDX'}, //Dividend Divvyr BTC
+    {currency: 'BTC', issuer: 'rNPRNzBB92BVpAhhZr4iXDTveCgV5Pofm9'}, //Divvy Israel BTC
     {currency: 'USD', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'}, //Snapswap USD
-    {currency: 'CNY', issuer: 'rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK'}, //RippleCN CNY
-    {currency: 'CNY', issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA'}, //RippleChina CNY
-    {currency: 'JPY', issuer: 'rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6'}  //RippleTradeJapan JPY
+    {currency: 'CNY', issuer: 'rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK'}, //DivvyCN CNY
+    {currency: 'CNY', issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA'}, //DivvyChina CNY
+    {currency: 'JPY', issuer: 'rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6'}  //DivvyTradeJapan JPY
   ];
 
   if (period=="7d")       params.startTime ? endTime.add(7,  "days")  : startTime.subtract(7,  "days");
@@ -102,7 +102,7 @@ function marketTraders (params, callback) {
     hbase.getExchanges({
       start: startTime,
       end: endTime,
-      base: c.base || {currency: 'XRP'},
+      base: c.base || {currency: 'XDV'},
       counter: c.counter || c,
       descending: false
     }, function(err, data) {

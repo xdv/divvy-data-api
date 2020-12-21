@@ -1,6 +1,6 @@
 var winston = require('winston');
 var moment  = require('moment');
-var ripple  = require('ripple-lib');
+var divvy  = require('divvy-lib');
 var async   = require('async');
 var networkValue = require('../library/metrics/networkValue');
 var utils   = require('../library/utils');
@@ -8,16 +8,16 @@ var utils   = require('../library/utils');
 /**
  *  totalNetworkValue:
  *
- *  total value of currencies for the top gateways on the ripple network,
+ *  total value of currencies for the top gateways on the divvy network,
  *  normalized to a specific currrency.
  *
  *  request :
  *
  * {
  *    time : "2014-03-13T20:39:26+00:00"      //time of desired snapshot
- *    exchange  : {                           // optional, defaults to XRP
- *      currency  : (XRP, USD, BTC, etc.),
- *      issuer    : "rAusZ...."               // optional, required if currency != XRP
+ *    exchange  : {                           // optional, defaults to XDV
+ *      currency  : (XDV, USD, BTC, etc.),
+ *      issuer    : "rAusZ...."               // optional, required if currency != XDV
  *    }
  * }
  *
@@ -64,7 +64,7 @@ var utils   = require('../library/utils');
 function totalNetworkValue(params, callback) {
 
   var viewOpts = {};
-  var ex       = params.exchange || {currency:'XRP'};
+  var ex       = params.exchange || {currency:'XDV'};
   var time     = moment.utc(params.time);
   var cacheKey;
 
@@ -79,11 +79,11 @@ function totalNetworkValue(params, callback) {
   } else if (typeof ex.currency != 'string') {
     return callback('invalid exchange currency');
 
-  } else if (ex.currency.toUpperCase() != "XRP" && !ex.issuer) {
+  } else if (ex.currency.toUpperCase() != "XDV" && !ex.issuer) {
     return callback('exchange issuer is required');
 
-  } else if (ex.currency == "XRP" && ex.issuer) {
-    return callback('XRP cannot have an issuer');
+  } else if (ex.currency == "XDV" && ex.issuer) {
+    return callback('XDV cannot have an issuer');
   }
 
   rowkey = 'network_value';
@@ -122,7 +122,7 @@ function totalNetworkValue(params, callback) {
   function handleResponse (options, row, callback) {
     var params;
 
-    if (options.ex.currency === 'XRP') {
+    if (options.ex.currency === 'XDV') {
       callback(null, row);
       return;
     }

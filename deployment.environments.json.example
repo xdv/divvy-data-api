@@ -6,9 +6,9 @@
     "maxSockets" : 150,
     "batchSize"  : 100,
     "startIndex" : 32570,
-    "rippleds"   :  [
-      "http://s_east.ripple.com:51234",
-      "http://s_west.ripple.com:51234"
+    "divvyds"   :  [
+      "http://s_east.xdv.io:51234",
+      "http://s_west.xdv.io:51234"
     ],
     "redis" : {
       "enabled" : true,
@@ -31,9 +31,9 @@
     "maxSockets" : 150,
     "batchSize"  : 100,
     "startIndex" : 32570, 
-    "rippleds"   :  [
-      "http://s_east.ripple.com:51234",
-      "http://s_west.ripple.com:51234"
+    "divvyds"   :  [
+      "http://s_east.xdv.io:51234",
+      "http://s_west.xdv.io:51234"
     ],
     "redis" : {
       "enabled" : true,
@@ -56,9 +56,9 @@
     "maxSockets"  : 150,  
     "batchSize"   : 100,
     "startIndex"  : 32570, 
-    "rippleds"    :  [
-      "http://s_east.ripple.com:51234",
-      "http://s_west.ripple.com:51234"
+    "divvyds"    :  [
+      "http://s_east.xdv.io:51234",
+      "http://s_west.xdv.io:51234"
     ],
     "redis" : {
       "enabled" : true,

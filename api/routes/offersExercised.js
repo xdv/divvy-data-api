@@ -1,6 +1,6 @@
 var winston = require('winston'),
   moment    = require('moment'),
-  ripple    = require('ripple-lib'),
+  divvy    = require('divvy-lib'),
   _         = require('lodash'),
   tools     = require('../utils');
 
@@ -10,7 +10,7 @@ var winston = require('winston'),
  *
  *  expects params to have:
  *  {
- *    base: {currency: "XRP"},
+ *    base: {currency: "XDV"},
  *    counter: {currency: "USD", issuer: "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
  *    
  *    descending: true/false, // optional, defaults to true
@@ -48,7 +48,7 @@ var winston = require('winston'),
     }' http://localhost:5993/api/offersExercised    
 
   curl -H "Content-Type: application/json" -X POST -d '{
-    "base"  : {"currency": "XRP"},
+    "base"  : {"currency": "XDV"},
     "counter" : {"currency": "USD", "issuer" : "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
     "startTime" : "Mar 10, 2014 4:35 am",
     "endTime"   : "Mar 11, 2014 5:10:30 am",
@@ -60,7 +60,7 @@ var winston = require('winston'),
  
  
   curl -H "Content-Type: application/json" -X POST -d '{
-    "base"  : {"currency": "XRP"},
+    "base"  : {"currency": "XDV"},
     "counter" : {"currency": "USD", "issuer" : "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
     "startTime" : "Mar 11, 2014 4:44:00 am",
     "endTime"   : "Mar 12, 2014 5:09:00 am",
@@ -72,7 +72,7 @@ var winston = require('winston'),
  
   curl -H "Content-Type: application/json" -X POST -d '{
     "base"  : {"currency": "BTC", "issuer" : "rNPRNzBB92BVpAhhZr4iXDTveCgV5Pofm9"},
-    "counter" : {"currency": "XRP"},
+    "counter" : {"currency": "XDV"},
     "startTime" : "Apr 7, 2014 4:44:00 am",
     "endTime"   : "Apr 11, 2014 5:09:00 am",
     "reduce"    : false,
@@ -598,14 +598,14 @@ function offersExercised (params, callback, unlimit) {
       
     } else if (!params.base.issuer) {
       
-      if (params.base.currency.toUpperCase() === 'XRP') {
-        options.base = 'XRP';
+      if (params.base.currency.toUpperCase() === 'XDV') {
+        options.base = 'XDV';
       } else {
-        options.error = 'must specify issuer for all currencies other than XRP';
+        options.error = 'must specify issuer for all currencies other than XDV';
         return;
       }
       
-    } else if (params.base.issuer && ripple.UInt160.is_valid(params.base.issuer)) {
+    } else if (params.base.issuer && divvy.UInt160.is_valid(params.base.issuer)) {
       options.base = params.base.currency.toUpperCase()+"."+params.base.issuer;
       
     } else {
@@ -625,13 +625,13 @@ function offersExercised (params, callback, unlimit) {
       return;
       
     } else if (!params.counter.issuer) {
-      if (params.counter.currency.toUpperCase()  === 'XRP') {
-        options.counter = 'XRP';
+      if (params.counter.currency.toUpperCase()  === 'XDV') {
+        options.counter = 'XDV';
       } else {
-        options.error = 'must specify issuer for all currencies other than XRP';
+        options.error = 'must specify issuer for all currencies other than XDV';
         return;
       }
-    } else if (params.counter.issuer && ripple.UInt160.is_valid(params.counter.issuer)) {
+    } else if (params.counter.issuer && divvy.UInt160.is_valid(params.counter.issuer)) {
       options.counter = params.counter.currency.toUpperCase()+"."+params.counter.issuer;
       
     } else {
@@ -739,8 +739,8 @@ function offersExercised (params, callback, unlimit) {
    * @param {Object} rows
    */
   function handleInterest (rows) {
-    var base    = ripple.Currency.from_json(params.base.currency);
-    var counter = ripple.Currency.from_json(params.counter.currency);
+    var base    = divvy.Currency.from_json(params.base.currency);
+    var counter = divvy.Currency.from_json(params.counter.currency);
     
     if (base.has_interest()) {
       if (options.view.reduce === false) {
@@ -748,7 +748,7 @@ function offersExercised (params, callback, unlimit) {
           if (!i) return;
         
           //apply interest to the base amount
-          amount = ripple.Amount.from_human(row[2] + " " + params.base.currency).applyInterest(new Date(row[0])).to_human(); 
+          amount = divvy.Amount.from_human(row[2] + " " + params.base.currency).applyInterest(new Date(row[0])).to_human(); 
           pct   = row[2]/amount; 
           
           rows[i][2]  = amount;
@@ -760,7 +760,7 @@ function offersExercised (params, callback, unlimit) {
           if (!i) return;
           
           //apply interest to the base volume
-          value = ripple.Amount.from_human(row[1] + " " + params.base.currency).applyInterest(new Date(row[0])).to_human(); 
+          value = divvy.Amount.from_human(row[1] + " " + params.base.currency).applyInterest(new Date(row[0])).to_human(); 
           pct   = row[1]/value;
           
           //adjust the prices
@@ -778,7 +778,7 @@ function offersExercised (params, callback, unlimit) {
           if (!i) return;
           
           //apply interest to the counter amount
-          amount = ripple.Amount.from_human(row[3] + " " + params.counter.currency).applyInterest(new Date(row[0])).to_human(); 
+          amount = divvy.Amount.from_human(row[3] + " " + params.counter.currency).applyInterest(new Date(row[0])).to_human(); 
           pct   = amount/row[3]; 
           
           rows[i][3]  = amount;
@@ -790,7 +790,7 @@ function offersExercised (params, callback, unlimit) {
           if (!i) return;
           
           //apply interest to the counter volume
-          value = ripple.Amount.from_human(row[2] + " " + params.counter.currency).applyInterest(new Date(row[0])).to_human(); 
+          value = divvy.Amount.from_human(row[2] + " " + params.counter.currency).applyInterest(new Date(row[0])).to_human(); 
           pct   = value/row[2];
           
           //adjust the prices

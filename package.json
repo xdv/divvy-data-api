@@ -1,10 +1,10 @@
 {
-  "name": "ripple-data-api",
+  "name": "divvy-data-api",
   "version": "0.0.1",
-  "description": "API wrapper around couchdb for historical data from the ripple network",
+  "description": "API wrapper around couchdb for historical data from the divvy network",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ripple/ripple-data-api"
+    "url": "https://github.com/xdv/divvy-data-api"
   },
   "engines": {
     "node": ">=0.10"
@@ -40,7 +40,7 @@
     "q": "~1.0.0",
     "redis": "^0.10.1",
     "request": "^2.34.0",
-    "ripple-lib": "0.12.0",
+    "divvy-lib": "0.12.0",
     "thrift": "^0.9.2",
     "underscore": "^1.8.2",
     "winston": "~0.7.2"

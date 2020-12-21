@@ -1,6 +1,6 @@
 var winston   = require('winston');
 var moment    = require('moment');
-var ripple    = require('ripple-lib');
+var divvy    = require('divvy-lib');
 var async     = require('async');
 var valueSent = require('../../routes/valueSent');
 var utils     = require('../utils');
@@ -20,23 +20,23 @@ var currencies      = [
   {currency: 'USD', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'}, //Snapswap USD
   {currency: 'BTC', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'}, //Snapswap BTC
   {currency: 'EUR', issuer: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q'}, //Snapswap EUR
-  {currency: 'CNY', issuer: 'rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK'}, //RippleCN CNY
-  {currency: 'CNY', issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA'}, //RippleChina CNY
-  {currency: 'CNY', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}, //RippleFox CNY
+  {currency: 'CNY', issuer: 'rnuF96W4SZoCJmbHYBFoJZpR8eCaxNvekK'}, //DivvyCN CNY
+  {currency: 'CNY', issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA'}, //DivvyChina CNY
+  {currency: 'CNY', issuer: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y'}, //DivvyFox CNY
   {currency: 'JPY', issuer: 'r94s8px6kSw1uZ1MV98dhSRTvc6VMPoPcN'}, //Tokyo JPY
-  {currency: 'JPY', issuer: 'rJRi8WW24gt9X85PHAxfWNPCizMMhqUQwg'}, //Ripple Market Japan JPY
-  {currency: 'XRP'}
+  {currency: 'JPY', issuer: 'rJRi8WW24gt9X85PHAxfWNPCizMMhqUQwg'}, //Divvy Market Japan JPY
+  {currency: 'XDV'}
 ];
 
 //populate conversion pairs
 currencies.forEach(function(currency) {
 
-  if (currency.currency == 'XRP') {
+  if (currency.currency == 'XDV') {
     return;
   }
 
   conversionPairs.push({
-    base    : {currency: 'XRP'},
+    base    : {currency: 'XDV'},
     counter : currency
   });
 });
@@ -72,7 +72,7 @@ function totalValueSent(params, callback) {
   var response = {
     startTime    : startTime.format(),
     endTime      : endTime.format(),
-    exchange     : {currency:'XRP'},
+    exchange     : {currency:'XDV'},
     exchangeRate : 1,
     total        : 0,
     count        : 0
@@ -136,8 +136,8 @@ function totalValueSent(params, callback) {
 
       currencies.forEach(function(currency, index) {
 
-        if (currency.currency == "XRP") {
-          currency.rate            = 1; //for XRP
+        if (currency.currency == "XDV") {
+          currency.rate            = 1; //for XDV
           currency.convertedAmount = currency.amount;
         }
 
@@ -147,7 +147,7 @@ function totalValueSent(params, callback) {
 
       response.components = currencies;
 
-      //cache XRP normalized version
+      //cache XDV normalized version
       if (!params.no_cache) {
         cacheResponse (rowkey, response);
       }

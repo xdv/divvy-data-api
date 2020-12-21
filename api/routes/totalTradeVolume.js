@@ -1,6 +1,6 @@
 var winston     = require('winston');
 var moment      = require('moment');
-var ripple      = require('ripple-lib');
+var divvy      = require('divvy-lib');
 var async       = require('async');
 var tradeVolume = require('../library/metrics/tradeVolume');
 var utils       = require('../library/utils');
@@ -14,7 +14,7 @@ var intervals = [
 /**
  *  topMarkets:
  *
- *  the total trading volume for the top markets on the ripple network
+ *  the total trading volume for the top markets on the divvy network
  *  for a given time period, normalized USD. Returns data for the last 24 hours
  *  if no arguments are given.
  *
@@ -23,9 +23,9 @@ var intervals = [
  * {
  *    startTime : (any momentjs-readable date), // optional, defaults to 1 day before end time
  *    endTime   : (any momentjs-readable date), // optional, defaults to now
- *    exchange  : {                             // optional, defaults to XRP
- *      currency  : (XRP, USD, BTC, etc.),
- *      issuer    : "rAusZ...."                 // optional, required if currency != XRP
+ *    exchange  : {                             // optional, defaults to XDV
+ *      currency  : (XDV, USD, BTC, etc.),
+ *      issuer    : "rAusZ...."                 // optional, required if currency != XDV
  *    }
  *  }
  *
@@ -34,14 +34,14 @@ var intervals = [
  * {
  *    startTime    : '2014-03-13T20:26:24+00:00',   //period start
  *    endTime      : '2014-03-14T20:26:24+00:00',   //period end
- *    exchange     : { currency: 'XRP' },           //requested exchange currency
- *    exchangeRate : 1,                             //XRP exchange rate of requested currency
+ *    exchange     : { currency: 'XDV' },           //requested exchange currency
+ *    exchangeRate : 1,                             //XDV exchange rate of requested currency
  *    total        : 1431068.4284775178,            //total volume in requested currency
  *    count        : 627,                           //number of trades
  *    components   : [                              //list of component markets
  *      {
  *        base            : {"currency":"USD","issuer":"rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B"},
- *        counter         : {"currency":"XRP"},
+ *        counter         : {"currency":"XDV"},
  *        rate            : 69.9309953931345,
  *        count           : 99,
  *        amount          : 3107.9273091242917,
@@ -70,7 +70,7 @@ var intervals = [
 function topMarkets(params, callback) {
 
   var viewOpts = {};
-  var ex       = params.exchange || {currency:'XRP'};
+  var ex       = params.exchange || {currency:'XDV'};
   var rowkey;
   var startTime;
   var interval;
@@ -85,11 +85,11 @@ function topMarkets(params, callback) {
   } else if (typeof ex.currency != 'string') {
     return callback('invalid exchange currency');
 
-  } else if (ex.currency.toUpperCase() != "XRP" && !ex.issuer) {
+  } else if (ex.currency.toUpperCase() != "XDV" && !ex.issuer) {
     return callback('exchange issuer is required');
 
-  } else if (ex.currency == "XRP" && ex.issuer) {
-    return callback('XRP cannot have an issuer');
+  } else if (ex.currency == "XDV" && ex.issuer) {
+    return callback('XDV cannot have an issuer');
   }
 
   interval  = (params.interval || '').toLowerCase();
@@ -140,7 +140,7 @@ function topMarkets(params, callback) {
 
   function handleResponse (options, row, callback) {
 
-    if (options.ex.currency === 'XRP') {
+    if (options.ex.currency === 'XDV') {
       callback(null, row);
       return;
     }

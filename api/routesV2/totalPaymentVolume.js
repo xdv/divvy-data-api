@@ -17,7 +17,7 @@ var intervals = [
 function totalPaymentVolume(params, callback) {
 
   var viewOpts = {};
-  var ex = params.exchange || {currency:'XRP'};
+  var ex = params.exchange || {currency:'XDV'};
   var interval;
   var startTime;
   var rowkey;
@@ -31,11 +31,11 @@ function totalPaymentVolume(params, callback) {
   } else if (typeof ex.currency != 'string') {
     return callback('invalid exchange currency');
 
-  } else if (ex.currency.toUpperCase() != "XRP" && !ex.issuer) {
+  } else if (ex.currency.toUpperCase() != "XDV" && !ex.issuer) {
     return callback('exchange issuer is required');
 
-  } else if (ex.currency == "XRP" && ex.issuer) {
-    return callback('XRP cannot have an issuer');
+  } else if (ex.currency == "XDV" && ex.issuer) {
+    return callback('XDV cannot have an issuer');
   }
 
   interval  = (params.interval || '').toLowerCase();
@@ -86,7 +86,7 @@ function totalPaymentVolume(params, callback) {
   function handleResponse (options, row, callback) {
     var params;
 
-    if (options.ex.currency === 'XRP') {
+    if (options.ex.currency === 'XDV') {
       callback(null, row);
       return;
     }

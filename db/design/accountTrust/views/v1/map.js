@@ -20,7 +20,7 @@ function( doc ) {
       
       var node = affNode.ModifiedNode || affNode.CreatedNode;
       
-      if (!node || node.LedgerEntryType !== 'RippleState') {
+      if (!node || node.LedgerEntryType !== 'DivvyState') {
         return;
       }
       

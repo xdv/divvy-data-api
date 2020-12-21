@@ -3,10 +3,10 @@ function checker (config) {
   var     _ = require('lodash'),
     winston = require('winston'),
     async   = require('async'),
-    ripple  = require( 'ripple-lib' ),
-    Remote  = ripple.Remote,
-    Amount  = ripple.Amount,
-    Ledger  = require( '../node_modules/ripple-lib/src/js/ripple/ledger' ).Ledger,
+    divvy  = require( 'divvy-lib' ),
+    Remote  = divvy.Remote,
+    Amount  = divvy.Amount,
+    Ledger  = require( '../node_modules/divvy-lib/src/js/divvy/ledger' ).Ledger,
     db;
     
 /*  

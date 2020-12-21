@@ -44,26 +44,26 @@ function(doc) {
 
       var node = affNode.CreatedNode || affNode.ModifiedNode || affNode.DeletedNode;
 
-      // Look for XRP balance change in AccountRoot node
+      // Look for XDV balance change in AccountRoot node
       if (node.LedgerEntryType === 'AccountRoot') {
 
-        var xrpBalChange = parseAccountRootBalanceChange(node, account);
+        var xdvBalChange = parseAccountRootBalanceChange(node, account);
         
-        if (xrpBalChange) {
-          xrpBalChange.value += parseFloat(tx.Fee); //remove the fee from the balance change
+        if (xdvBalChange) {
+          xdvBalChange.value += parseFloat(tx.Fee); //remove the fee from the balance change
           
-          //if we are still negative, XRP was sent.
+          //if we are still negative, XDV was sent.
           //often this would be zero, indicating only a fee
-          //and not really sending XRP
-          if (xrpBalChange.value<0) {
-            xrpBalChange.value = dropsToXrp(xrpBalChange.value); //convert to XRP
-            accountBalanceChanges.push(xrpBalChange);
+          //and not really sending XDV
+          if (xdvBalChange.value<0) {
+            xdvBalChange.value = dropsToXdv(xdvBalChange.value); //convert to XDV
+            accountBalanceChanges.push(xdvBalChange);
           }
         }
       }
 
-      // Look for trustline balance change in RippleState node
-      if (node.LedgerEntryType === 'RippleState') {
+      // Look for trustline balance change in DivvyState node
+      if (node.LedgerEntryType === 'DivvyState') {
 
         var currBalChange = parseTrustlineBalanceChange(node, account, destination);
         if (currBalChange) {
@@ -85,8 +85,8 @@ function(doc) {
 
       if (node.NewFields.Account === account) {
         return {
-          value: dropsToXrp(node.NewFields.Balance),
-          currency: 'XRP',
+          value: dropsToXdv(node.NewFields.Balance),
+          currency: 'XDV',
           issuer: ''
         };
       }
@@ -100,10 +100,10 @@ function(doc) {
         prevBal    = node.PreviousFields.Balance,
         balChange  = finalBal - prevBal;
       
-      //if the final balance is greater than the previous, xrp was sent
+      //if the final balance is greater than the previous, xdv was sent
       if (balChange<0) return {
         value    : balChange,
-        currency : 'XRP',
+        currency : 'XDV',
         issuer   : ''
       };
     }
@@ -178,12 +178,12 @@ function(doc) {
     return balChange;
   }
 
-  function dropsToXrp (drops) {
+  function dropsToXdv (drops) {
     return parseFloat(drops) / 1000000.0;
   }
 
-  function xrpToDrops (xrp) {
-    return parseFloat(xrp) * 1000000.0;
+  function xdvToDrops (xdv) {
+    return parseFloat(xdv) * 1000000.0;
   }
 
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- *  ledgerImporter uses the rippled API to import
+ *  ledgerImporter uses the divvyd API to import
  *  ledgers into a CouchDB instance
  *
  *  Available command line options:
@@ -23,8 +23,8 @@ function ledgerImporter () {
     moment   = require('moment'),
     _        = require('lodash'),
     diff     = require('deep-diff'),
-    ripple   = require('ripple-lib'),
-    Ledger   = require('../node_modules/ripple-lib/src/js/ripple/ledger').Ledger,
+    divvy   = require('divvy-lib'),
+    Ledger   = require('../node_modules/divvy-lib/src/js/divvy/ledger').Ledger,
     options  = {};
 
   winston.add(winston.transports.File, { filename: process.env.LOG_FILE || 'importer.log' });
@@ -95,7 +95,7 @@ function ledgerImporter () {
     //importer from the last point where its correct.
 
 
-    //get the last closed ledger from rippled
+    //get the last closed ledger from divvyd
     //work back from there
 
     if (!opts.minLedgerIndex) {
@@ -206,9 +206,9 @@ function ledgerImporter () {
 
 
  /*
-  *  importLive: import live data from rippled
+  *  importLive: import live data from divvyd
   *
-  *  first, get the latest ledger from rippled and save it to the database.
+  *  first, get the latest ledger from divvyd and save it to the database.
   *  we do this so that we can check every subsequent batch of live ledgers
   *  against the ledger chain stored in the database.
   *
@@ -473,7 +473,7 @@ function ledgerImporter () {
 
  /**
   *  getLedgerBatch starts from a specified ledger or the most recently
-  *  closed one and uses the rippled API to get the batch of ledgers
+  *  closed one and uses the divvyd API to get the batch of ledgers
   *  one by one, walking the ledger hash chain backwards until it reaches the minLedger
   *
   *  Available options:
@@ -500,7 +500,7 @@ function ledgerImporter () {
       opts.results = [];
     }
 
-    // get ledger from rippled API
+    // get ledger from divvyd API
     getLedger({
       identifier: opts.lastLedger
     }, function(err, ledger){
@@ -564,7 +564,7 @@ function ledgerImporter () {
 
 
  /**
-  *  getLedger uses the rippled API to get the ledger
+  *  getLedger uses the divvyd API to get the ledger
   *  corresponding to the given identifier, or the last
   *  closed ledger if identifier is null
   *
@@ -602,7 +602,7 @@ function ledgerImporter () {
 
     // store server statuses (reset for each ledger identifier)
     if (!servers) {
-      servers = _.map(config.rippleds, function(serv){
+      servers = _.map(config.divvyds, function(serv){
         return {
           server: serv,
           attempt: 0
@@ -616,7 +616,7 @@ function ledgerImporter () {
     if (serverEntry.attempt >= 2) {
       callback('ledger ' +
         (reqData.params[0].ledger_index || reqData.params[0].ledger_hash) +
-        ' not available from any of the rippleds');
+        ' not available from any of the divvyds');
       return;
     }
 
@@ -651,7 +651,7 @@ function ledgerImporter () {
 
       // check if the server returned a buffer/string instead of json
       if (typeof res.body === 'string' || res.body.constructor.name === 'Buffer') {
-        // console.log('rippled returned a buffer instead of a JSON object for request: ' +
+        // console.log('divvyd returned a buffer instead of a JSON object for request: ' +
         //   JSON.stringify(reqData.params[0]) + '. Trying again...');
         // servers[server] = 'tryAgain';
 
@@ -711,7 +711,7 @@ function ledgerImporter () {
       // check for malformed ledger
       if (!ledger || !ledger.ledger_index || !ledger.ledger_hash) {
         winston.info('got malformed ledger from ' +
-          (server === 'http://0.0.0.0:51234' ? 'http://ct.ripple.com:51234' : server) + ': ' +
+          (server === 'http://0.0.0.0:51234' ? 'http://ct.xdv.io:51234' : server) + ': ' +
           JSON.stringify(ledger));
 
         _.find(servers, function(serv){ return serv.server === server; }).attempt++;
@@ -728,7 +728,7 @@ function ledgerImporter () {
       }
 
       // keep track of which server ledgers came from
-      ledger.server = (server === 'http://0.0.0.0:51234' ? 'http://ct.ripple.com:51234' : server);
+      ledger.server = (server === 'http://0.0.0.0:51234' ? 'http://ct.xdv.io:51234' : server);
 
       // check that transactions hash to the expected value
       var ledgerJsonTxHash;
@@ -773,10 +773,10 @@ function ledgerImporter () {
   function formatRemoteLedger(ledger) {
 
     ledger.close_time_rpepoch = ledger.close_time;
-    ledger.close_time_timestamp = ripple.utils.toTimestamp(ledger.close_time);
-    ledger.close_time_human = moment(ripple.utils.toTimestamp(ledger.close_time))
+    ledger.close_time_timestamp = divvy.utils.toTimestamp(ledger.close_time);
+    ledger.close_time_human = moment(divvy.utils.toTimestamp(ledger.close_time))
       .utc().format("YYYY-MM-DD HH:mm:ss Z");
-    ledger.from_rippled_api = true;
+    ledger.from_divvyd_api = true;
 
     delete ledger.close_time;
     delete ledger.hash;
@@ -807,7 +807,7 @@ function ledgerImporter () {
         var fields = node.FinalFields || node.NewFields;
 
         if (typeof fields.BookDirectory === "string") {
-          node.exchange_rate = ripple.Amount.from_quality(fields.BookDirectory).to_json().value;
+          node.exchange_rate = divvy.Amount.from_quality(fields.BookDirectory).to_json().value;
         }
 
       });
